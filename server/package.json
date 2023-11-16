@@ -1,5 +1,5 @@
 {
-  "name": "final-project-template-server",
+  "name": "chatty-server",
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",

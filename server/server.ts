@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- Remove when used */
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'node:http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 
@@ -15,6 +15,7 @@ const db = new pg.Pool({
 });
 
 const app = express();
+const server = createServer(app);
 
 // Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
@@ -26,7 +27,7 @@ app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
 app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello, World!' });
+  res.sendFile(new URL('../client/index.html', import.meta.url).pathname);
 });
 
 /**

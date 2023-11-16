@@ -1,8 +1,8 @@
 {
-  "name": "final-project-template",
-  "version": "2.0.0",
+  "name": "chatty",
+  "version": "1.0.0",
   "private": true,
-  "description": "A full stack JavaScript solo project.",
+  "description": "A full stack JavaScript solo project. Real-time chat application.",
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=production npm start --prefix server",
