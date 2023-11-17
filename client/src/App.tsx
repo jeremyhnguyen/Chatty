@@ -17,9 +17,13 @@ socket.emit("chat message", "Hello, socket is working!");
 
 export default function App() {
   return (
-    <>
-      <h1>Hello</h1>
-      <Chat />
-    </>
+    <div>
+      <div className="sticky">
+        <h1>Chat</h1>
+      </div>
+      <div className="m-10 flex flex-col">
+        <Chat />
+      </div>
+    </div>
   );
 }
