@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import "./App.css";
-// import {Server} from "socket.io";
+import { Chat } from "./components/Chat";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:8081");
+
+// socket.on("connect", () => {
+//   console.log("Connected to server");
+// });
+
+// socket.on("chat message", (msg) => {
+//   console.log("Received message:", msg);
+// });
+
+socket.emit("chat message", "Hello, socket is working!");
 
 export default function App() {
-  const [serverData, setServerData] = useState("");
-
-  useEffect(() => {
-    async function readServerData() {
-      const resp = await fetch("/api/hello");
-      const data = await resp.json();
-
-      console.log("Data from server:", data);
-
-      setServerData(data.message);
-    }
-
-    readServerData();
-  }, []);
-
   return (
     <>
-      <h1>{serverData}</h1>
+      <h1>Hello</h1>
+      <Chat />
     </>
   );
 }
