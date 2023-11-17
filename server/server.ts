@@ -5,6 +5,8 @@ import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -17,28 +19,20 @@ const db = new pg.Pool({
 });
 
 const app = express();
+const httpServer = createServer(app);
 
-// Create paths for static directories
-const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
-const uploadsStaticDir = new URL('public', import.meta.url).pathname;
-
-app.use(cors());
-app.use(express.static(reactStaticDir));
-// Static directory for file uploads server/public/
-app.use(express.static(uploadsStaticDir));
-app.use(express.json());
-
-// app.get('/api/hello', (req, res) => {
-//   res.json({ message: 'Chatty' });
-// });
-
-const server = createServer(app);
-const io = new Server(server, {
+const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
     credentials: true,
   },
+});
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.get('/', (_req, res) => {
+  res.sendFile(join(__dirname, 'index.html'));
 });
 
 io.on('connection', (socket) => {
@@ -53,13 +47,23 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(8081, () => {
-  console.log('server is running on port 8081');
+httpServer.listen(8081, () => {
+  console.log('httpServer listening on port 8081');
 });
 
-app.get('/', (_req, res) => {
-  res.sendFile(new URL('./index.html', import.meta.url).pathname);
-});
+// Create paths for static directories
+const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
+const uploadsStaticDir = new URL('public', import.meta.url).pathname;
+
+app.use(cors());
+app.use(express.static(reactStaticDir));
+// Static directory for file uploads server/public/
+app.use(express.static(uploadsStaticDir));
+app.use(express.json());
+
+// app.get('/api/hello', (req, res) => {
+//   res.json({ message: 'Chatty' });
+// });
 
 app.listen(process.env.PORT, () => {
   process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);

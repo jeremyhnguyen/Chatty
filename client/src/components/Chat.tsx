@@ -11,9 +11,9 @@ export function Chat() {
 
 function ChatInput() {
   return (
-    <div className="sticky">
+    <div>
       <form id="form" action="" className="flex gap-2">
-        <input id="input" autoComplete="off" />{" "}
+        <input id="input" autoComplete="off" placeholder="Message" />{" "}
         <button>
           <BiSolidSend />
         </button>
@@ -32,7 +32,45 @@ function ChatLogs() {
           lobortis elementum nibh tellus molestie nunc. Pretium viverra
           suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
           velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
           lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam{" "}
+        </li>
+        <li>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
+          lobortis elementum nibh tellus molestie nunc. Pretium viverra
+          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
+          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
+          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
         </li>
       </ul>
     </div>
