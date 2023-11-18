@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
@@ -23,16 +24,10 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
     methods: ['GET', 'POST'],
     credentials: true,
   },
-});
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-app.get('/', (_req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
 });
 
 io.on('connection', (socket) => {
