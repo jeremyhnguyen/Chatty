@@ -1,8 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- Remove when used */
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -15,20 +19,59 @@ const db = new pg.Pool({
 });
 
 const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.get('/', (_req, res) => {
+  res.sendFile(join(__dirname, 'index.html'));
+});
+
+io.on('connection', (socket) => {
+  console.log('user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on('chat message', (msg: string) => {
+    console.log('message:', msg);
+    io.emit('chat message', msg);
+  });
+});
+
+httpServer.listen(8081, () => {
+  console.log('httpServer listening on port 8081');
+});
 
 // Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
+app.use(cors());
 app.use(express.static(reactStaticDir));
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello, World!' });
+// app.get('/api/hello', (req, res) => {
+//   res.json({ message: 'Chatty' });
+// });
+
+app.listen(process.env.PORT, () => {
+  process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);
 });
 
+app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
+
+app.use(errorMiddleware);
 /**
  * Serves React's index.html if no api route matches.
  *
@@ -40,10 +83,3 @@ app.get('/api/hello', (req, res) => {
  * Catching everything that doesn't match a route and serving index.html allows
  * React Router to manage the routing.
  */
-app.get('*', (req, res) => res.sendFile(`${reactStaticDir}/index.html`));
-
-app.use(errorMiddleware);
-
-app.listen(process.env.PORT, () => {
-  process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);
-});
