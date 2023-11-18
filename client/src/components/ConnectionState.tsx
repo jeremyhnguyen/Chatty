@@ -5,7 +5,6 @@ type Props = {
 };
 
 export function ConnectionState({ isConnected }: Props) {
-  const statusIndicator = isConnected ? "🟢" : "🔴";
   return (
     <div className="flex items-center justify-center gap-0.5">
       <p className="text-xs text-[#8d8d8d]">Connection Status:</p>
