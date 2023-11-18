@@ -105,13 +105,19 @@ button:focus-visible {
   border-bottom-color: #000;
 }
 
-#messages {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  color: #e5e5e5;
-}
-
 #messages > li {
   padding: 0.5rem 1rem;
+}
+
+#seahorse {
+  margin-left: 6.3rem;
+  margin-top: 0.2rem;
+}
+
+.indicator {
+  font-size: 0.35rem;
+  margin-top: 0.35rem;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 2px 1px rgba(41, 198, 36, 0.7);
 }
