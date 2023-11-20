@@ -1,65 +1,57 @@
 import { BiSolidSend } from "react-icons/bi";
-import { useState } from "react";
-import { socket } from "../socket";
+import { useState, useEffect } from "react";
+// import { socket } from "../socket";
+import { io, Socket } from "socket.io-client";
+
+type Log = {
+  message: string;
+  dateTime: string;
+};
 
 export function Chat() {
-  return (
-    <>
-      <ChatLogs />
-      <ChatInput />
-    </>
-  );
-}
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [input, setInput] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
 
-function ChatInput() {
-  const [value, setValue] = useState("");
-  const [isLoading, setisLoading] = useState(false);
+  useEffect(() => {
+    const newSocket = io();
 
-  function onSubmit(event) {
-    event.preventDefault();
-    setisLoading(true);
+    setSocket(newSocket);
 
-    socket.timeout(5000).emit("create-something", value, () => {
-      setisLoading(false);
+    newSocket.on("chat message", (log: string) => {
+      const dateTime = getDateAndTime();
+      const newLog: Log = {
+        message: log,
+        dateTime: `${dateTime.date} at ${dateTime.time}`,
+      };
+      setLogs((prevLogs) => [...prevLogs, newLog]);
     });
-  }
-  return (
-    <div>
-      <form id="form" onSubmit={onSubmit} className="flex gap-2">
-        <input
-          id="input"
-          autoComplete="off"
-          onChange={(event) => setValue(event.target.value)}
-          placeholder="Message"
-        />
-        <button type="submit" disabled={isLoading} className="bg-[#5D65FE]">
-          <BiSolidSend />
-        </button>
-      </form>
-    </div>
-  );
-}
 
-function ChatLogs() {
-  type DateTime = {
-    date: string;
-    time: string;
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (input && socket) {
+      socket.emit("chat message", input);
+      setInput("");
+    }
   };
 
-  function getDateAndTime(): DateTime {
+  function getDateAndTime() {
     const currentDate = new Date();
-
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
     const day = currentDate.getDate().toString().padStart(2, "0");
     const year = currentDate.getFullYear();
-
     let hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
     hours = hours ? hours : 12;
     const formattedHours = hours.toString().padStart(2, "0");
-
     const formattedDate = `${month}/${day}/${year}`;
     const formattedTime = `${formattedHours}:${minutes
       .toString()
@@ -68,40 +60,44 @@ function ChatLogs() {
     const today: string = new Date().toLocaleDateString();
     const showDate: boolean = today !== formattedDate;
 
-    if (showDate) {
-      return {
-        date: formattedDate,
-        time: formattedTime,
-      };
-    } else {
-      return {
-        date: "",
-        time: formattedTime,
-      };
-    }
+    return {
+      date: showDate ? formattedDate : "",
+      time: formattedTime,
+    };
   }
 
   return (
-    <ul className="m-0 flex list-none flex-col p-0 text-left">
-      <li className="flex flex-col">
-        <h1>
-          <span className="text-sm">User</span>
-          <span className="text-xs">
-            {`${getDateAndTime().date} at ${getDateAndTime().time}`}
-          </span>
-        </h1>
-        <p className="text-sm text-[#e5e5e5]">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
-          lobortis elementum nibh tellus molestie nunc. Pretium viverra
-          suspendisse potenti nullam. Sed lectus vestibulum mattis ullamcorper
-          velit sed ullamcorper morbi tincidunt. Dignissim diam quis enim
-          lobortis scelerisque fermentum dui faucibus in. Odio pellentesque diam
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu
-          lobortis elementum nibh tellus molestie nunc.
-        </p>
-      </li>
-    </ul>
+    <>
+      <ul className="m-0 flex w-full list-none flex-col p-0 text-left">
+        {logs.map((log, index) => (
+          <li key={index} className="flex flex-col">
+            <h1>
+              <span className="text-sm font-bold">User</span>
+              <span className="text-[8px] text-[#8d8d8d]">{log.dateTime}</span>
+            </h1>
+            <div>
+              <p className="break-words text-sm text-[#e5e5e5]">
+                {log.message}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <form id="form" onSubmit={handleSubmit} className="flex gap-2">
+        <input
+          id="input"
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Message"
+          autoComplete="off"
+        />
+        <button type="submit" className="bg-[#5D65FE]">
+          <BiSolidSend />
+        </button>
+      </form>
+    </>
   );
 }
+
+/* button disabled={isLoading} may need this to stop new inputs if load is slow*/

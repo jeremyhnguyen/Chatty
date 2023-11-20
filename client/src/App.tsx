@@ -10,16 +10,6 @@ import { NavBar } from "./components/NavBar";
 
 const socket = io("http://localhost:8081");
 
-// socket.on("connect", () => {
-//   console.log("Connected to server");
-// });
-
-// socket.on("chat message", (msg) => {
-//   console.log("Received message:", msg);
-// });
-
-socket.emit("chat message", "Hello, socket is working!");
-
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   // const [fooEvents, setFooEvents] = useState([]);
@@ -61,7 +51,7 @@ export default function App() {
   return (
     <div>
       <NavBar />
-      <div className="m-10 flex flex-col">
+      <div className="m-10 flex w-screen flex-col">
         <ConnectionState isConnected={isConnected} />
         {/* <Events events={fooEvents} /> */}
         <ConnectionManager onConnection={handleConnections} />
