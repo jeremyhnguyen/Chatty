@@ -33,6 +33,7 @@ const io = new Server(httpServer, {
     methods: ['GET', 'POST'],
     credentials: true,
   },
+  // connectionStateRecovery: {}, state recovery default function (may not need)
 });
 
 io.on('connection', (socket) => {
@@ -60,10 +61,6 @@ app.use(express.static(reactStaticDir));
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
-
-// app.get('/api/hello', (req, res) => {
-//   res.json({ message: 'Chatty' });
-// });
 
 app.listen(process.env.PORT, () => {
   process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);
