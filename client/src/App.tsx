@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react"; // add useContext import
 import "./App.css";
 import { Chat } from "./components/Chat";
 import io from "socket.io-client";
@@ -11,14 +11,13 @@ import { LandingPage } from "./components/LandingPage";
 
 const socket = io("http://localhost:8081");
 
-type Theme = "light" | "dark";
+// type Theme = "light" | "dark"; // light/dark mode
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  // const [fooEvents, setFooEvents] = useState([]);
-  const [theme, setTheme] = useState<Theme>("light");
+  // const [theme, setTheme] = useState<Theme>("light"); // for light/dark mode
 
-  // useContext() {} // need this
+  // useContext() {} //need this to serve logo images
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
@@ -58,7 +57,6 @@ export default function App() {
       <NavBar />
       <div className="m-10 flex flex-col">
         <ConnectionState isConnected={isConnected} />
-        {/* <Events events={fooEvents} /> */}
         <ConnectionManager onConnection={handleConnections} />
         <Chat />
       </div>
