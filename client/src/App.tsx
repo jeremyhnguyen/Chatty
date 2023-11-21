@@ -49,9 +49,9 @@ export default function App() {
   }
 
   return (
-    <div>
+    <div className="w-screen">
       <NavBar />
-      <div className="m-10 flex w-screen flex-col">
+      <div className="m-10 flex flex-col">
         <ConnectionState isConnected={isConnected} />
         {/* <Events events={fooEvents} /> */}
         <ConnectionManager onConnection={handleConnections} />

@@ -8,6 +8,7 @@ export default defineConfig({
     proxy: {
       "/api": "http://localhost:8080",
       "/socket.io": "http://localhost:8081",
+      "/images": "http://localhost:8080",
     },
   },
 });

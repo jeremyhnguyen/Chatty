@@ -8,7 +8,10 @@ export function ConnectionManager({ onConnection }: Props) {
       <button className="w-24 rounded-3xl" onClick={() => onConnection(true)}>
         Connect
       </button>
-      <button className="w-24 rounded-3xl" onClick={() => onConnection(false)}>
+      <button
+        className="w-24 rounded-3xl bg-[#de3214]"
+        onClick={() => onConnection(false)}
+      >
         Disconnect
       </button>
     </div>
