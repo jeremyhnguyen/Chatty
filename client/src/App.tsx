@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./App.css";
 import { Chat } from "./components/Chat";
 import io from "socket.io-client";
 import { ConnectionManager } from "./components/ConnectionManager";
 import { ConnectionState } from "./components/ConnectionState";
 import { NavBar } from "./components/NavBar";
+import { LandingPage } from "./components/LandingPage";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
 
 const socket = io("http://localhost:8081");
 
+type Theme = "light" | "dark";
+
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   // const [fooEvents, setFooEvents] = useState([]);
+  const [theme, setTheme] = useState<Theme>("light");
 
+  // useContext() {} // need this
   useEffect(() => {
     function onConnect() {
       setIsConnected(true);
@@ -49,7 +54,7 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen">
+    <div className="dark w-screen">
       <NavBar />
       <div className="m-10 flex flex-col">
         <ConnectionState isConnected={isConnected} />
@@ -57,6 +62,7 @@ export default function App() {
         <ConnectionManager onConnection={handleConnections} />
         <Chat />
       </div>
+      <LandingPage />
     </div>
   );
 }
