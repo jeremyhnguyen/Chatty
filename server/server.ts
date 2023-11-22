@@ -8,6 +8,21 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
+
+type User = {
+  userId: number;
+  username: string;
+  hashedPassword: string;
+};
+type Auth = {
+  username: string;
+  password: string;
+};
+
+const hashKey = process.env.TOKEN_SECRET;
+if (!hashKey) throw new Error('TOKEN_SECRET not found in .env');
 
 const connectionString =
   process.env.DATABASE_URL ||
@@ -62,13 +77,65 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
+app.post('/api/auth/sign-up', async (req, res, next) => {
+  try {
+    const { username, password } = req.body as Partial<Auth>;
+    if (!username || !password) {
+      throw new ClientError(400, 'username and password are required fields');
+    }
+    const hashedPassword = await argon2.hash(password);
+    const sql = `
+      insert into "users" ("username", "hashedPassword")
+      values ($1, $2)
+      returning "username", "createdAt"
+    `;
+    const params = [username, hashedPassword];
+    const result = await db.query<User>(sql, params);
+    const [user] = result.rows;
+    res.status(201).json(user);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/auth/sign-in', async (req, res, next) => {
+  try {
+    const { username, password } = req.body as Partial<Auth>;
+    if (!username || !password) {
+      throw new ClientError(401, 'invalid login');
+    }
+    const sql = `
+    select "userId",
+           "hashedPassword"
+      from "users"
+     where "username" = $1
+  `;
+    const params = [username];
+    const result = await db.query<User>(sql, params);
+    const [user] = result.rows;
+    if (!user) {
+      throw new ClientError(401, 'invalid login');
+    }
+    const { userId, hashedPassword } = user;
+    if (!(await argon2.verify(hashedPassword, password))) {
+      throw new ClientError(401, 'invalid login');
+    }
+    const payload = { userId, username };
+    const token = jwt.sign(payload, hashKey);
+    res.json({ token, user: payload });
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.use(errorMiddleware);
+
 app.listen(process.env.PORT, () => {
   process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);
 });
 
 app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
 
-app.use(errorMiddleware);
 /**
  * Serves React's index.html if no api route matches.
  *

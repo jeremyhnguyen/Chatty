@@ -1,17 +1,33 @@
 import { RegistrationModal } from "./RegistrationModal";
 import { useNavigate, Link } from "react-router-dom";
+import { FormEvent } from "react";
+import { signIn, signUp } from "../api";
 
 export function LandingPage() {
   const navigate = useNavigate();
-  function handleSubmit() {
-    navigate("/chat");
+  //
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    async function handleSignUp(username: string, password: string) {
+      await signUp(username, password);
+      navigate("/");
+    }
+    async function handleSignIn(username: string, password: string) {
+      const auth = await signIn(username, password);
+      if (auth.user && auth.token) {
+        onSignIn(auth);
+        navigate("/chat");
+      }
+    }
   }
 
   return (
     <div className="flex h-full flex-col items-center justify-center">
-      <div className="mt-48 flex justify-center gap-0.5 lg:ml-[5%]">
-        <h1 className="title text-[5rem]">Chatty</h1>
-        <span className="ml-1 min-h-[84px] w-[80px]">
+      <div className="mt-72 flex justify-center gap-0.5">
+        <h1 className="title text-[3rem] md:text-[4rem] lg:text-[5rem]">
+          Whispurr
+        </h1>
+        <span className="ml-1 w-[40px] md:w-[60px] lg:min-h-[84px] lg:w-[80px]">
           <img src="/images/logo -dark mode.png"></img>
         </span>
       </div>
@@ -36,7 +52,7 @@ export function LandingPage() {
       <div className="mt-2 flex items-center justify-evenly gap-x-20">
         <a className="ml-52 text-xs font-medium underline">Register</a>
       </div>
-      <Link className="mt-auto text-xs font-medium underline" to="/chat">
+      <Link className="mb-3 mt-auto text-xs font-medium underline" to="/chat">
         Log In as Guest
       </Link>
       <RegistrationModal />

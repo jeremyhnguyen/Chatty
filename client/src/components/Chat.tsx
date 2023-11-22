@@ -1,6 +1,6 @@
+// import { socket } from "../socket";
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect } from "react";
-// import { socket } from "../socket";
 import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
@@ -18,6 +18,7 @@ export function Chat() {
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
+    console.log(newSocket); //check the socket ID
 
     newSocket.on("chat message", (log: string) => {
       const dateTime = getDateAndTime();
@@ -85,22 +86,30 @@ export function Chat() {
 
   return (
     <>
-      <ul className="mt-8 flex w-full list-none flex-col p-8 text-left">
-        {logs.map((log, index) => (
-          <li key={index} className="flex flex-col">
-            <h1>
-              <span className="text-sm font-bold">User</span>
-              <span className="text-[8px] text-[#8d8d8d]">{log.dateTime}</span>
-            </h1>
-            <div>
-              <p className="break-words text-sm text-[#e5e5e5]">
-                {log.message}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <form id="form" onSubmit={handleSubmit} className="flex gap-2">
+      <div className="overflow-y-scroll">
+        <ul className="flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left">
+          {logs.map((log, index) => (
+            <li key={index} className="flex flex-col">
+              <h1>
+                <span className="text-sm font-bold">User</span>
+                <span className="text-[8px] text-[#8d8d8d]">
+                  {log.dateTime}
+                </span>
+              </h1>
+              <div>
+                <p className="break-words text-sm text-[#e5e5e5]">
+                  {log.message}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <form
+        id="form"
+        onSubmit={handleSubmit}
+        className="t-black fixed bottom-0 left-0 right-0 flex h-[3.4rem] gap-2 p-1.5 backdrop-blur-sm"
+      >
         <input
           id="input"
           type="text"
@@ -108,6 +117,7 @@ export function Chat() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message"
           autoComplete="off"
+          className="m-0.5 grow rounded-2xl pl-3 focus:outline-[#666666]"
         />
         <button type="submit" className="bg-[#5D65FE]" disabled={!isConnected}>
           <BiSolidSend />

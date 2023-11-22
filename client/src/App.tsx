@@ -5,41 +5,59 @@ import { NavBar } from "./components/NavBar";
 import { LandingPage } from "./components/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import { AppContext } from "./components/AppContext";
+import { User, Auth } from "./api";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
 
-const socket = io("http://localhost:8081");
+const socket = io();
+
+const tokenKey = "react-context-jwt";
 
 // type Theme = "light" | "dark"; // light/dark mode
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const [token, setToken] = useState<string>();
+  const [user, setUser] = useState<User>();
   // const [theme, setTheme] = useState<Theme>("light"); // for light/dark mode
 
   // useContext() {} //need this to serve logo images
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
+    const auth = localStorage.getItem(tokenKey);
+    if (auth) {
+      const a = JSON.parse(auth);
+      setUser(a.user);
+      setToken(a.token);
     }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    // function onFooEvent(value) {
-    //   setFooEvents((previous) => [...previous, value]);
-    // }
-
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    // socket.on("foo", onFooEvent);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      //   socket.off("foo", onFooEvent);
     };
   }, []);
+
+  function handleSignIn(auth: Auth) {
+    localStorage.setItem(tokenKey, JSON.stringify(auth));
+    setUser(auth.user);
+    setToken(auth.token);
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem(tokenKey);
+    setUser(undefined);
+    setToken(undefined);
+  }
+
+  //
+  function onConnect() {
+    setIsConnected(true);
+  }
+
+  function onDisconnect() {
+    setIsConnected(false);
+  }
 
   function handleConnections(toConnect: boolean): void {
     if (toConnect) {
@@ -54,14 +72,18 @@ export default function App() {
   const contextValues = {
     isConnected,
     handleConnections,
+    user,
+    token,
+    handleSignIn,
+    handleSignOut,
   };
 
   return (
     <AppContext.Provider value={contextValues}>
-      <div className="dark flex h-screen w-screen justify-center overscroll-none">
+      <div className="dark flex h-screen w-screen flex-col overscroll-none">
         <Routes>
+          <Route index element={<LandingPage />} />
           <Route path="/" element={<NavBar />}>
-            <Route index element={<LandingPage />} />
             <Route path="chat" element={<Chat />} />
           </Route>
         </Routes>
