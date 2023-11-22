@@ -1,10 +1,10 @@
+import { useContext } from "react";
 import { GrStatusGoodSmall } from "react-icons/gr";
+import { AppContext } from "./AppContext";
 
-type Props = {
-  isConnected: boolean;
-};
+export function ConnectionState() {
+  const { isConnected } = useContext(AppContext);
 
-export function ConnectionState({ isConnected }: Props) {
   return (
     <div className="flex items-center justify-center gap-0.5">
       <p className="text-xs text-[#8d8d8d]">Connection Status:</p>

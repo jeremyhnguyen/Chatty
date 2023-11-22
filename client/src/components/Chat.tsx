@@ -1,6 +1,7 @@
 import { BiSolidSend } from "react-icons/bi";
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 // import { socket } from "../socket";
+import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
 type Log = {
@@ -9,14 +10,13 @@ type Log = {
 };
 
 export function Chat() {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket>();
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
-
+  const { isConnected } = useContext(AppContext);
   useEffect(() => {
     const newSocket = io();
-
     setSocket(newSocket);
 
     newSocket.on("chat message", (log: string) => {
@@ -26,6 +26,7 @@ export function Chat() {
         dateTime: `${dateTime.date} at ${dateTime.time}`,
       };
       setLogs((prevLogs) => [...prevLogs, newLog]);
+      setInput("");
     });
 
     return () => {
@@ -35,9 +36,25 @@ export function Chat() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (input && socket) {
+    if (input && socket && isConnected) {
       socket.emit("chat message", input);
-      setInput("");
+      // socket.once("chat message", (log: string) => {
+      //   console.log("chatted", log);
+      //   const dateTime = getDateAndTime();
+
+      //   const newLog: Log = {
+      //     message: log,
+      //     dateTime: `${dateTime.date} at ${dateTime.time}`,
+      //   };
+      //   setLogs((prevLogs) => {
+      //     console.log("log", logs);
+      //     console.log("prevLog", prevLogs);
+
+      //     return [...prevLogs, newLog];
+      //   }); // Why?
+      //   // setLogs([...logs, newLog]);
+      // });
+      // setInput("");
     }
   };
 
@@ -68,7 +85,7 @@ export function Chat() {
 
   return (
     <>
-      <ul className="m-0 flex w-full list-none flex-col p-0 text-left">
+      <ul className="mt-8 flex w-full list-none flex-col p-8 text-left">
         {logs.map((log, index) => (
           <li key={index} className="flex flex-col">
             <h1>
@@ -92,7 +109,7 @@ export function Chat() {
           placeholder="Message"
           autoComplete="off"
         />
-        <button type="submit" className="bg-[#5D65FE]">
+        <button type="submit" className="bg-[#5D65FE]" disabled={!isConnected}>
           <BiSolidSend />
         </button>
       </form>

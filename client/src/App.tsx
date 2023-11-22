@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react"; // add useContext import
-import "./App.css";
 import { Chat } from "./components/Chat";
 import io from "socket.io-client";
-import { ConnectionManager } from "./components/ConnectionManager";
-import { ConnectionState } from "./components/ConnectionState";
 import { NavBar } from "./components/NavBar";
 import { LandingPage } from "./components/LandingPage";
+import { Routes, Route } from "react-router-dom";
+import { AppContext } from "./components/AppContext";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
 
@@ -52,15 +51,21 @@ export default function App() {
     }
   }
 
+  const contextValues = {
+    isConnected,
+    handleConnections,
+  };
+
   return (
-    <div className="dark w-screen">
-      <NavBar />
-      <div className="m-10 flex flex-col">
-        <ConnectionState isConnected={isConnected} />
-        <ConnectionManager onConnection={handleConnections} />
-        <Chat />
+    <AppContext.Provider value={contextValues}>
+      <div className="dark flex h-screen w-screen justify-center overscroll-none">
+        <Routes>
+          <Route path="/" element={<NavBar />}>
+            <Route index element={<LandingPage />} />
+            <Route path="chat" element={<Chat />} />
+          </Route>
+        </Routes>
       </div>
-      <LandingPage />
-    </div>
+    </AppContext.Provider>
   );
 }
