@@ -1,24 +1,34 @@
 import { RegistrationModal } from "./RegistrationModal";
-import { useNavigate, Link } from "react-router-dom";
-import { FormEvent } from "react";
-import { signIn, signUp } from "../api";
+import { useNavigate } from "react-router-dom";
+import { FormEvent, useContext, useState } from "react";
+import { signIn } from "../api";
+import { AppContext } from "./AppContext";
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const { handleSignIn, handleConnections } = useContext(AppContext);
+  const [isOpen, setIsOpen] = useState(false);
   //
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    async function handleSignUp(username: string, password: string) {
-      await signUp(username, password);
-      navigate("/");
-    }
-    async function handleSignIn(username: string, password: string) {
-      const auth = await signIn(username, password);
+    const form = new FormData(event.currentTarget);
+    const { username, password } = Object.fromEntries(form.entries());
+    console.log(username, password);
+    try {
+      const auth = await signIn(username as string, password as string);
       if (auth.user && auth.token) {
-        onSignIn(auth);
+        handleSignIn(auth);
+        handleConnections(true);
         navigate("/chat");
       }
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  function handleGuestLogin() {
+    handleConnections(true);
+    navigate("/chat");
   }
 
   return (
@@ -31,14 +41,32 @@ export function LandingPage() {
           <img src="/images/logo -dark mode.png"></img>
         </span>
       </div>
-      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3">
+      <form
+        id="sign-up-form"
+        onSubmit={handleSubmit}
+        className="mt-8 flex flex-col gap-3"
+      >
         <label className="flex justify-center gap-3">
           Username
-          <input required type="text" size={20} className="pl-1" />
+          <input
+            id="sign-up-username"
+            required
+            type="text"
+            name="username"
+            size={20}
+            className="pl-1 text-black"
+          />
         </label>
         <label className=" flex justify-center gap-4">
           Password
-          <input required type="password" size={20} className="pl-1" />
+          <input
+            id="sign-up-password"
+            required
+            type="password"
+            name="password"
+            size={20}
+            className="pl-1 text-black"
+          />
         </label>
         <div className="ml-44 mt-0.5 flex justify-center">
           <button
@@ -50,12 +78,20 @@ export function LandingPage() {
         </div>
       </form>
       <div className="mt-2 flex items-center justify-evenly gap-x-20">
-        <a className="ml-52 text-xs font-medium underline">Register</a>
+        <div
+          className="ml-52 text-xs font-medium underline"
+          onClick={() => setIsOpen(true)}
+        >
+          <span>Register</span>
+        </div>
       </div>
-      <Link className="mb-3 mt-auto text-xs font-medium underline" to="/chat">
+      <button
+        className="mb-3 mt-auto text-xs font-medium underline"
+        onClick={handleGuestLogin}
+      >
         Log In as Guest
-      </Link>
-      <RegistrationModal />
+      </button>
+      {isOpen && <RegistrationModal onOpen={setIsOpen} />}
     </div>
   );
 }

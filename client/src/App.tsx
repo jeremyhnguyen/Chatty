@@ -80,7 +80,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={contextValues}>
-      <div className="dark flex h-screen w-screen flex-col overscroll-none">
+      <div className="min-w-screen dark flex flex-col overscroll-none bg-[#242526] text-white">
         <Routes>
           <Route index element={<LandingPage />} />
           <Route path="/" element={<NavBar />}>

@@ -14,7 +14,7 @@ export function Chat() {
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
-  const { isConnected } = useContext(AppContext);
+  const { isConnected, user } = useContext(AppContext);
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
@@ -87,11 +87,13 @@ export function Chat() {
   return (
     <>
       <div className="overflow-y-scroll">
-        <ul className="flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left">
+        <ul className="flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left text-blue-200">
           {logs.map((log, index) => (
             <li key={index} className="flex flex-col">
               <h1>
-                <span className="text-sm font-bold">User</span>
+                <span className="text-sm font-bold">
+                  {user?.username ?? "Guest"}
+                </span>
                 <span className="text-[8px] text-[#8d8d8d]">
                   {log.dateTime}
                 </span>
@@ -117,9 +119,9 @@ export function Chat() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Message"
           autoComplete="off"
-          className="m-0.5 grow rounded-2xl pl-3 focus:outline-[#666666]"
+          className="m-0.5 grow rounded-2xl bg-[#333333] pl-3 focus:outline-[#666666]"
         />
-        <button type="submit" className="bg-[#5D65FE]" disabled={!isConnected}>
+        <button type="submit" className="bg-[#3d81e0]" disabled={!isConnected}>
           <BiSolidSend />
         </button>
       </form>
