@@ -57,10 +57,14 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  socket.on('chat message', async (msg: string) => {
-    console.log('message:', msg);
-    io.emit('chat message', msg);
-  });
+  socket.on(
+    'chat message',
+    async (value: { input: string; userId: number }) => {
+      console.log('value:', value);
+      // await db.query(sql, params) // insert body/userid into db
+      io.emit('chat message', value.input);
+    },
+  );
 });
 
 httpServer.listen(8081, () => {

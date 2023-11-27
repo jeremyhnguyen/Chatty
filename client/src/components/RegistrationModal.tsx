@@ -19,10 +19,10 @@ export function RegistrationModal({ onOpen }: Props) {
   }
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-[#242039] from-20% to-[#b47468] backdrop-blur-sm">
+    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-[#3d81e0] from-10% to-[#000] to-85% backdrop-blur-sm">
       <div className=" absolute z-50 flex h-96 w-80 flex-col items-center justify-center rounded-xl bg-[#242526] p-10 shadow-md shadow-[#000]">
         <div className="lg:ml-[5% mt-3 flex justify-center gap-0.5">
-          <h1 className="title text-[2.5rem]">Whispurr</h1>
+          <h1 className="title text-[2.5rem] leading-tight">Whispurr</h1>
           <span className="ml-1 min-h-[40px] w-[50px]">
             <img src="/images/logo -dark mode.png"></img>
           </span>
@@ -53,7 +53,7 @@ export function RegistrationModal({ onOpen }: Props) {
           </label>
           <div className="mt-0.5 flex justify-center">
             <button
-              className="mt-3 flex w-28 justify-center rounded-md border-[#fff] bg-[#ac6f65] px-0 py-2 font-black"
+              className="mt-3 flex w-28 cursor-pointer justify-center rounded-md border border-transparent bg-[#3d81e0] px-0 py-2 text-xs transition duration-500 ease-in-out hover:border-[#fff] hover:bg-[#136eed]"
               type="submit"
             >
               Create Account
@@ -61,7 +61,7 @@ export function RegistrationModal({ onOpen }: Props) {
           </div>
         </form>
         <div
-          className="mt-6 text-xs font-medium underline"
+          className="mt-6 cursor-pointer text-xs font-medium underline"
           onClick={() => onOpen(false)}
         >
           <span>Already have an account?</span>

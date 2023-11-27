@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react"; // add useContext import
+import { useEffect, useLayoutEffect, useState } from "react"; // add useContext import
 import { Chat } from "./components/Chat";
 import io from "socket.io-client";
 import { NavBar } from "./components/NavBar";
 import { LandingPage } from "./components/LandingPage";
 import { Routes, Route } from "react-router-dom";
-import { AppContext } from "./components/AppContext";
+import { AppContext, type Theme } from "./components/AppContext";
 import { User, Auth } from "./api";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
@@ -13,15 +13,17 @@ const socket = io();
 
 const tokenKey = "react-context-jwt";
 
-// type Theme = "light" | "dark"; // light/dark mode
-
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [token, setToken] = useState<string>();
   const [user, setUser] = useState<User>();
-  // const [theme, setTheme] = useState<Theme>("light"); // for light/dark mode
+  const [theme, setTheme] = useState<Theme>("dark"); // for light/dark mode
 
   // useContext() {} //need this to serve logo images
+  useLayoutEffect(() => {
+    document.documentElement.className = theme;
+  }, [theme]);
+
   useEffect(() => {
     const auth = localStorage.getItem(tokenKey);
     if (auth) {
@@ -46,6 +48,7 @@ export default function App() {
 
   function handleSignOut() {
     localStorage.removeItem(tokenKey);
+    setIsConnected(false);
     setUser(undefined);
     setToken(undefined);
   }
@@ -65,11 +68,13 @@ export default function App() {
       setIsConnected(true);
     } else {
       socket.disconnect();
-      setIsConnected(false);
+      handleSignOut();
     }
   }
 
   const contextValues = {
+    theme,
+    setTheme,
     isConnected,
     handleConnections,
     user,
@@ -80,7 +85,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={contextValues}>
-      <div className="min-w-screen dark flex flex-col overscroll-none bg-[#242526] text-white">
+      <div className="min-w-screen flex flex-col overscroll-none bg-[#f7f7f7] text-black dark:bg-[#242526] dark:text-white">
         <Routes>
           <Route index element={<LandingPage />} />
           <Route path="/" element={<NavBar />}>

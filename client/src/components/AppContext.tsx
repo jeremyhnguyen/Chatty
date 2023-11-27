@@ -1,7 +1,11 @@
 import { createContext } from "react";
 import { User, Auth } from "../api";
 
+export type Theme = "light" | "dark"; // light/dark mode
+
 type ContextProps = {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
   isConnected: boolean;
   handleConnections: (toConnect: boolean) => void;
   user: User | undefined;
@@ -11,6 +15,8 @@ type ContextProps = {
 };
 
 export const AppContext = createContext<ContextProps>({
+  theme: "dark",
+  setTheme: () => undefined,
   isConnected: false,
   handleConnections: () => undefined,
   user: undefined,
