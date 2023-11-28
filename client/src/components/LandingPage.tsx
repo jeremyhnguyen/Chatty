@@ -33,7 +33,7 @@ export function LandingPage() {
 
   return (
     <div className="flex h-full flex-col items-center justify-center bg-[#242526] text-white">
-      <div className="mt-64 h-[300px] rounded-xl border-2 border-[#000] p-8 shadow-md shadow-black lg:my-40 lg:h-[380px]">
+      <div className="mt-56 h-[300px] rounded-xl border-2 border-[#000] p-8 shadow-md shadow-black lg:my-40 lg:mt-64 lg:h-[380px]">
         <div className="flex justify-center gap-0.5 lg:mt-10">
           <h1 className="title text-[1.8em] leading-tight md:text-[4rem] lg:text-[5rem]">
             Whispurr
@@ -89,7 +89,7 @@ export function LandingPage() {
         {isOpen && <RegistrationModal onOpen={setIsOpen} />}
       </div>
       <button
-        className="mt-36 text-xs font-medium underline lg:mt-64"
+        className="mt-44 text-xs font-medium underline lg:mt-64"
         onClick={handleGuestLogin}
       >
         Log In as Guest
