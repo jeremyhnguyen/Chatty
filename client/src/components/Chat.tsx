@@ -35,9 +35,13 @@ export function Chat() {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input && socket && isConnected) {
+      await fetch("/api/messages", {
+        method: "POST",
+        body: JSON.stringify({ user: user?.userId, body: input }),
+      });
       socket.emit("chat message", input);
       // socket.emit("chat message", { input, userId }); // how to get userId value:object
 
