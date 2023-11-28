@@ -89,7 +89,7 @@ export function LandingPage() {
         {isOpen && <RegistrationModal onOpen={setIsOpen} />}
       </div>
       <button
-        className="mt-44 text-xs font-medium underline lg:mt-64"
+        className="mt-44 text-xs font-medium underline md:mt-72 lg:mt-40"
         onClick={handleGuestLogin}
       >
         Log In as Guest
