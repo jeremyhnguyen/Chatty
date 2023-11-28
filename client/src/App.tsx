@@ -51,6 +51,7 @@ export default function App() {
     setIsConnected(false);
     setUser(undefined);
     setToken(undefined);
+    setTheme("dark");
   }
 
   //
