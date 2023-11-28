@@ -125,7 +125,7 @@ export function Chat() {
         />
         <button
           type="submit"
-          className="flex w-8 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
+          className="flex w-10 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
           disabled={!isConnected}
         >
           <BiSolidSend />
