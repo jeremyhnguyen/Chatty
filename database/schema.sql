@@ -18,7 +18,7 @@ CREATE TABLE "messages" (
   "messageId" serial PRIMARY KEY,
   "userId" integer,
   "body" text,
-  "sentAt" timestamptz
+  "sentAt" timestamptz DEFAULT (now())
 );
 
 COMMENT ON COLUMN "users"."photoUrl" IS 'for profile photo';

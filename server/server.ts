@@ -140,6 +140,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
 
 app.post('/api/messages', async (req, res, next) => {
   const { userId, body } = req.body as { userId: number; body: string };
+  console.log(userId, body);
   const params = [userId, body];
   const sql = `
            INSERT into "messages" ("userId", "body")
@@ -147,8 +148,8 @@ app.post('/api/messages', async (req, res, next) => {
            returning *
          `;
   const result = await db.query(sql, params);
-  console.log('RESULT', result);
-  io.emit('chat message', result.rows[0]);
+  console.log('RESULT', result.rows[0]);
+  io.emit('chat message', result.rows[0].body);
   res.sendStatus(201);
 });
 
