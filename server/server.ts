@@ -153,7 +153,13 @@ app.post('/api/messages', async (req, res, next) => {
 app.get('/api/messageLog', async (req, res, next) => {
   try {
     const sql = `
-  SELECT * from "messages"
+  SELECT
+    "messages"."messageId",
+    "messages"."body",
+    "messages"."sentAt",
+    "users"."username"
+  from "messages" LEFT JOIN "users" USING ("userId")
+  ORDER BY "messageId"
   `;
     const result = await db.query(sql);
     res.json(result.rows);

@@ -11,7 +11,8 @@ import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
 type Log = {
-  userId: number;
+  username: string;
+  messageId: number;
   body: string;
   sentAt: string;
 };
@@ -148,7 +149,7 @@ export function Chat() {
             >
               <h1 className="leading-tight">
                 <span className="text-sm font-bold">
-                  {user?.username ?? "Guest"}
+                  {log?.username ?? "Guest"}
                 </span>
                 <span className="text-[8px] text-[#8d8d8d]">{log.sentAt}</span>
               </h1>
