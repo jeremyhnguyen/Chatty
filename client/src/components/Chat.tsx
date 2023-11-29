@@ -1,6 +1,12 @@
 // import { socket } from "../socket";
 import { BiSolidSend } from "react-icons/bi";
-import { useState, useContext, useEffect } from "react";
+import {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
@@ -16,6 +22,9 @@ export function Chat() {
   const [input, setInput] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
   const { isConnected, user } = useContext(AppContext);
+
+  const chatContainerRef = useRef<HTMLUListElement>(null);
+  const lastChatRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     const newSocket = io();
@@ -37,6 +46,19 @@ export function Chat() {
       newSocket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (lastChatRef.current) {
+      lastChatRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [logs]);
+
+  useLayoutEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [logs]);
 
   //
   async function fetchMessages() {
@@ -114,9 +136,16 @@ export function Chat() {
   return (
     <>
       <div className="overflow-y-scroll bg-[#f7f7f7] dark:bg-[#242526]">
-        <ul className="flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left text-blue-400 dark:text-blue-200">
+        <ul
+          className="mb-4 flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left text-blue-400 dark:text-blue-200"
+          ref={chatContainerRef}
+        >
           {logs.map((log, index) => (
-            <li key={index} className="flex flex-col px-[0.2rem] py-[0.5rem]">
+            <li
+              key={index}
+              className="mr-5 flex flex-col px-[0.2rem] py-[0.5rem]"
+              ref={logs.length - 1 === index ? lastChatRef : null}
+            >
               <h1 className="leading-tight">
                 <span className="text-sm font-bold">
                   {user?.username ?? "Guest"}
