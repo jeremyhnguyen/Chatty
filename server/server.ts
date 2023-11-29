@@ -57,14 +57,20 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  socket.on(
-    'chat message',
-    async (value: { input: string; userId: number }) => {
-      console.log('value:', value);
-      // await db.query(sql, params) // insert body/userid into db
-      io.emit('chat message', value.input);
-    },
-  );
+  // socket.on(
+  //   'chat message',
+  //   async (value: { input: string; userId: number }) => {
+  //     console.log('value:', value);
+  //     const sql = `
+  //         INSERT into "messages" ("userId", "body")
+  //         values ($1, $2)
+  //         returning *;
+  //       `;
+  //     const result = await db.query(sql, [value.userId, value.input]); // insert body/userid into db
+  //     console.log('RESULT', result.rows[0]);
+  //     io.emit('chat message', value.input);
+  //   },
+  // );
 });
 
 httpServer.listen(8081, () => {
@@ -130,6 +136,21 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+app.post('/api/messages', async (req, res, next) => {
+  const { userId, body } = req.body as { userId: number; body: string };
+  console.log(userId, body);
+  const params = [userId, body];
+  const sql = `
+           INSERT into "messages" ("userId", "body")
+           values ($1, $2)
+           returning *
+         `;
+  const result = await db.query(sql, params);
+  console.log('RESULT', result.rows[0]);
+  io.emit('chat message', result.rows[0].body);
+  res.sendStatus(201);
 });
 
 app.use(errorMiddleware);
