@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { json } from 'stream/consumers';
 
 type User = {
   userId: number;
@@ -103,8 +104,8 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
     const result = await db.query<User>(sql, params);
     const [user] = result.rows;
     res.status(201).json(user);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -133,24 +134,39 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
     const payload = { userId, username };
     const token = jwt.sign(payload, hashKey);
     res.json({ token, user: payload });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
 app.post('/api/messages', async (req, res, next) => {
-  const { userId, body } = req.body as { userId: number; body: string };
-  console.log(userId, body);
-  const params = [userId, body];
-  const sql = `
+  try {
+    const { userId, body } = req.body as { userId: number; body: string };
+    const params = [userId, body];
+    const sql = `
            INSERT into "messages" ("userId", "body")
            values ($1, $2)
            returning *
          `;
-  const result = await db.query(sql, params);
-  console.log('RESULT', result.rows[0]);
-  io.emit('chat message', result.rows[0].body);
-  res.sendStatus(201);
+    const result = await db.query(sql, params);
+    io.emit('chat message', result.rows[0]);
+    res.sendStatus(201);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/messageLog', async (req, res, next) => {
+  try {
+    const sql = `
+  SELECT * from "messages"
+  `;
+    const result = await db.query(sql);
+    console.log('message log:', result);
+    res.json(result.rows);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use(errorMiddleware);

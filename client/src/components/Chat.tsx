@@ -5,8 +5,9 @@ import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
 type Log = {
-  message: string;
-  dateTime: string;
+  userId: number;
+  body: string;
+  sentAt: string;
 };
 
 export function Chat() {
@@ -15,18 +16,20 @@ export function Chat() {
   const [input, setInput] = useState("");
   // const [isLoading, setIsLoading] = useState(false);
   const { isConnected, user } = useContext(AppContext);
+
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
-    console.log(newSocket); //check the socket ID
-
-    newSocket.on("chat message", (log: string) => {
-      const dateTime = getDateAndTime();
-      const newLog: Log = {
-        message: log,
-        dateTime: `${dateTime.date} at ${dateTime.time}`,
-      };
-      setLogs((prevLogs) => [...prevLogs, newLog]);
+    fetchMessages(); // test
+    newSocket.on("chat message", (log: Log) => {
+      // const dateTime = getDateAndTime();
+      setLogs((prevLogs) => [...prevLogs, log]);
+      // const newLog: Log = {
+      //   userId: log.userId,
+      //   body: log.body,
+      //   sentAt: log.sentAt,
+      // };
+      // setLogs([...logs, newLog]);
       setInput("");
     });
 
@@ -35,10 +38,24 @@ export function Chat() {
     };
   }, []);
 
+  //
+  async function fetchMessages() {
+    try {
+      const response = await fetch("/api/messageLog");
+      if (!response.ok) throw new Error(`fetch error:, ${response.status}`);
+      const messageLog = await response.json();
+      setLogs(messageLog);
+      // setLogs((prevLogs) => [...prevLogs, ...messageLog]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // fetchMessages();
+  //
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input && socket && isConnected) {
-      console.log(input);
       await fetch("/api/messages", {
         method: "POST",
         headers: {
@@ -69,33 +86,31 @@ export function Chat() {
     }
   };
 
-  function getDateAndTime() {
-    const currentDate = new Date();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-    const day = currentDate.getDate().toString().padStart(2, "0");
-    const year = currentDate.getFullYear();
-    let hours = currentDate.getHours();
-    const minutes = currentDate.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const formattedHours = hours.toString().padStart(2, "0");
-    const formattedDate = `${month}/${day}/${year}`;
-    const formattedTime = `${formattedHours}:${minutes
-      .toString()
-      .padStart(2, "0")}${ampm}`;
+  // function getDateAndTime() {
+  //   const currentDate = new Date();
+  //   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+  //   const day = currentDate.getDate().toString().padStart(2, "0");
+  //   const year = currentDate.getFullYear();
+  //   let hours = currentDate.getHours();
+  //   const minutes = currentDate.getMinutes();
+  //   const ampm = hours >= 12 ? "PM" : "AM";
+  //   hours = hours % 12;
+  //   hours = hours ? hours : 12;
+  //   const formattedHours = hours.toString().padStart(2, "0");
+  //   const formattedDate = `${month}/${day}/${year}`;
+  //   const formattedTime = `${formattedHours}:${minutes
+  //     .toString()
+  //     .padStart(2, "0")}${ampm}`;
 
-    const today: string = new Date().toLocaleDateString();
-    const showDate: boolean = today !== formattedDate;
+  //   const today: string = new Date().toLocaleDateString();
+  //   const showDate: boolean = today !== formattedDate;
 
-    return {
-      date: showDate ? formattedDate : "",
-      time: formattedTime,
-    };
-  }
+  // return {
+  //   date: showDate ? formattedDate : "",
+  //   time: formattedTime,
+  // };
+  // }
 
-  console.log("user", user?.username);
-  console.log("logs", logs);
   return (
     <>
       <div className="overflow-y-scroll bg-[#f7f7f7] dark:bg-[#242526]">
@@ -106,13 +121,11 @@ export function Chat() {
                 <span className="text-sm font-bold">
                   {user?.username ?? "Guest"}
                 </span>
-                <span className="text-[8px] text-[#8d8d8d]">
-                  {log.dateTime}
-                </span>
+                <span className="text-[8px] text-[#8d8d8d]">{log.sentAt}</span>
               </h1>
               <div>
                 <p className="break-words text-sm text-black dark:text-[#e5e5e5]">
-                  {log.message}
+                  {log.body}
                 </p>
               </div>
             </li>
