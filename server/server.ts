@@ -74,9 +74,11 @@ io.on('connection', (socket) => {
   // );
 });
 
-httpServer.listen(8081, () => {
-  console.log('httpServer listening on port 8081');
-});
+// httpServer.listen(8081, () => {
+//   console.log('httpServer listening on port 8081');
+// });
+
+// 8081 for socket server
 
 // Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
