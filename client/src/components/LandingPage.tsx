@@ -13,7 +13,6 @@ export function LandingPage() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const { username, password } = Object.fromEntries(form.entries());
-    console.log(username, password);
     try {
       const auth = await signIn(username as string, password as string);
       if (auth.user && auth.token) {

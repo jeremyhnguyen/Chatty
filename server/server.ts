@@ -162,7 +162,6 @@ app.get('/api/messageLog', async (req, res, next) => {
   SELECT * from "messages"
   `;
     const result = await db.query(sql);
-    console.log('message log:', result);
     res.json(result.rows);
   } catch (error) {
     next(error);
