@@ -88,8 +88,9 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/info', (req, res) => {
-  res.json(connectionString);
+app.get('/api/info', async (req, res) => {
+  const result = await db.query('select * from users');
+  res.json({ connectionString, users: result.rows });
 });
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
