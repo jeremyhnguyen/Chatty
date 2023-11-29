@@ -88,6 +88,10 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
+app.get('/api/info', (req, res) => {
+  res.json(connectionString);
+});
+
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
     const { username, password } = req.body as Partial<Auth>;
@@ -171,7 +175,7 @@ app.get('/api/messageLog', async (req, res, next) => {
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
-  process.stdout.write(`\n\napp listening on port ${process.env.PORT}\n\n`);
+  console.log(`\n\napp listening on port ${process.env.PORT}\n\n`);
 });
 
 app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
