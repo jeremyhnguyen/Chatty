@@ -19,7 +19,7 @@ export function NavBar() {
         <ConnectionManager />
         <div className="flex justify-center gap-0.5 lg:ml-[5%]">
           <h1 className="title text-[1.8em] leading-tight">Whispurr</h1>
-          <span className="ml-0.5 w-[8%] min-w-[27px] hover:animate-spin">
+          <span className="ml-0.5 w-[8%] min-w-[27px] self-center">
             <img
               src={
                 theme === "light"

@@ -94,6 +94,8 @@ export function Chat() {
     };
   }
 
+  console.log("user", user?.username);
+  console.log("logs", logs);
   return (
     <>
       <div className="overflow-y-scroll bg-[#f7f7f7] dark:bg-[#242526]">
