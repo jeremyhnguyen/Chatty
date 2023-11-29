@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react"; // add useContext import
 import { Chat } from "./components/Chat";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import { NavBar } from "./components/NavBar";
 import { LandingPage } from "./components/LandingPage";
 import { Routes, Route } from "react-router-dom";
@@ -9,7 +9,7 @@ import { User, Auth } from "./api";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
 
-const socket = io();
+const socket = io("/");
 
 const tokenKey = "react-context-jwt";
 
@@ -17,7 +17,7 @@ export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [token, setToken] = useState<string>();
   const [user, setUser] = useState<User>();
-  const [theme, setTheme] = useState<Theme>("dark"); // for light/dark mode
+  const [theme, setTheme] = useState<Theme>("dark");
 
   // useContext() {} //need this to serve logo images
   useLayoutEffect(() => {

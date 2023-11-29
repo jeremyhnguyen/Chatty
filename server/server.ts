@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'dotenv/config';
 import express from 'express';
-import { createServer } from 'http';
+// import { createServer } from 'http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+// import { Server } from 'socket.io';
+// import cors from 'cors';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
-import { json } from 'stream/consumers';
 
 type User = {
   userId: number;
@@ -36,43 +33,29 @@ const db = new pg.Pool({
 });
 
 const app = express();
-const httpServer = createServer(app);
+// const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: '*',
-    // origin: [
-    //   'http://localhost:5173',
-    //   'http://127.0.0.1:5173',
-    //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
-    // ],
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
-  // connectionStateRecovery: {}, state recovery default function (may not need)
-});
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: '*',
+//     // origin: [
+//     //   'http://localhost:5173',
+//     //   'http://127.0.0.1:5173',
+//     //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
+//     // ],
+//     methods: ['GET', 'POST'],
+//     credentials: true,
+//   },
+//   // connectionStateRecovery: {}, state recovery default function (may not need)
+// });
 
-io.on('connection', (socket) => {
-  console.log('user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
+// io.on('connection', (socket) => {
+//   console.log('user connected');
+//   socket.on('disconnect', () => {
+//     console.log('user disconnected');
+//   });
 
-  // socket.on(
-  //   'chat message',
-  //   async (value: { input: string; userId: number }) => {
-  //     console.log('value:', value);
-  //     const sql = `
-  //         INSERT into "messages" ("userId", "body")
-  //         values ($1, $2)
-  //         returning *;
-  //       `;
-  //     const result = await db.query(sql, [value.userId, value.input]); // insert body/userid into db
-  //     console.log('RESULT', result.rows[0]);
-  //     io.emit('chat message', value.input);
-  //   },
-  // );
-});
+// });
 
 // httpServer.listen(8081, () => {
 //   console.log('httpServer listening on port 8081');
@@ -84,11 +67,15 @@ io.on('connection', (socket) => {
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
-app.use(cors());
+// app.use(cors());
 app.use(express.static(reactStaticDir));
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
+
+app.get('/api/hello', async (req, res) => {
+  res.json({ connectionString, message: 'Hi' });
+});
 
 app.get('/api/info', async (req, res) => {
   const result = await db.query('select * from users');
@@ -156,7 +143,7 @@ app.post('/api/messages', async (req, res, next) => {
            returning *
          `;
     const result = await db.query(sql, params);
-    io.emit('chat message', result.rows[0]);
+    // io.emit('chat message', result.rows[0]);
     res.sendStatus(201);
   } catch (error) {
     next(error);
@@ -175,14 +162,6 @@ app.get('/api/messageLog', async (req, res, next) => {
   }
 });
 
-app.use(errorMiddleware);
-
-app.listen(process.env.PORT, () => {
-  console.log(`\n\napp listening on port ${process.env.PORT}\n\n`);
-});
-
-app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
-
 /**
  * Serves React's index.html if no api route matches.
  *
@@ -194,3 +173,10 @@ app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
  * Catching everything that doesn't match a route and serving index.html allows
  * React Router to manage the routing.
  */
+app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
+
+app.use(errorMiddleware);
+
+app.listen(process.env.PORT, () => {
+  console.log(`\n\napp listening on port ${process.env.PORT}\n\n`);
+});
