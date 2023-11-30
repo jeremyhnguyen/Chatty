@@ -8,6 +8,7 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { eiows } from 'eiows';
 
 type User = {
   userId: number;
@@ -36,17 +37,18 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
+  wsEngine: eiows.Server,
   cors: {
-    origin: '*',
-    // origin: [
-    //   'http://localhost:5173',
-    //   'http://127.0.0.1:5173',
-    //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
-    // ],
+    // origin: '*',
+    origin: [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://chatty-dev.us-west-2.elasticbeanstalk.com',
+      'https://www.whispurr.net',
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  // connectionStateRecovery: {}, state recovery default function (may not need)
 });
 
 io.on('connection', (socket) => {
@@ -72,14 +74,14 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/hello', async (req, res) => {
-  res.json({ connectionString, message: 'Hi' });
-});
+// app.get('/api/hello', async (req, res) => {
+//   res.json({ connectionString, message: 'Hi' });
+// });
 
-app.get('/api/info', async (req, res) => {
-  const result = await db.query('select * from users');
-  res.json({ connectionString, users: result.rows });
-});
+// app.get('/api/info', async (req, res) => {
+//   const result = await db.query('select * from users');
+//   res.json({ connectionString, users: result.rows });
+// });
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {

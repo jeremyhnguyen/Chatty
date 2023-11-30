@@ -9,7 +9,7 @@ import { User, Auth } from "./api";
 // import { socket } from "./socket";
 // import { Events } from "./components/Events";
 
-const socket = io("/");
+const socket = io();
 
 const tokenKey = "react-context-jwt";
 
