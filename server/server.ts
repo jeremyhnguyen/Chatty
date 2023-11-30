@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import 'dotenv/config';
 import express from 'express';
-// import { createServer } from 'http';
+import { createServer } from 'http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
-// import { Server } from 'socket.io';
-// import cors from 'cors';
+import { Server } from 'socket.io';
+import cors from 'cors';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 
@@ -33,33 +33,32 @@ const db = new pg.Pool({
 });
 
 const app = express();
-// const httpServer = createServer(app);
+const httpServer = createServer(app);
 
-// const io = new Server(httpServer, {
-//   cors: {
-//     origin: '*',
-//     // origin: [
-//     //   'http://localhost:5173',
-//     //   'http://127.0.0.1:5173',
-//     //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
-//     // ],
-//     methods: ['GET', 'POST'],
-//     credentials: true,
-//   },
-//   // connectionStateRecovery: {}, state recovery default function (may not need)
-// });
+const io = new Server(httpServer, {
+  cors: {
+    origin: '*',
+    // origin: [
+    //   'http://localhost:5173',
+    //   'http://127.0.0.1:5173',
+    //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
+    // ],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  // connectionStateRecovery: {}, state recovery default function (may not need)
+});
 
-// io.on('connection', (socket) => {
-//   console.log('user connected');
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected');
-//   });
+io.on('connection', (socket) => {
+  console.log('user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
 
-// });
-
-// httpServer.listen(8081, () => {
-//   console.log('httpServer listening on port 8081');
-// });
+httpServer.listen(8081, () => {
+  console.log('httpServer listening on port 8081');
+});
 
 // 8081 for socket server
 
@@ -67,7 +66,7 @@ const app = express();
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
-// app.use(cors());
+app.use(cors());
 app.use(express.static(reactStaticDir));
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
@@ -143,7 +142,7 @@ app.post('/api/messages', async (req, res, next) => {
            returning *
          `;
     const result = await db.query(sql, params);
-    // io.emit('chat message', result.rows[0]);
+    io.emit('chat message', result.rows[0]);
     res.sendStatus(201);
   } catch (error) {
     next(error);
