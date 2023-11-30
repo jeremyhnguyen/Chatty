@@ -37,13 +37,13 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    // origin: '*',
-    origin: [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-      'http://chatty-dev.us-west-2.elasticbeanstalk.com',
-      'https://www.whispurr.net',
-    ],
+    origin: '*',
+    // origin: [
+    //   'http://localhost:5173',
+    //   'http://127.0.0.1:5173',
+    //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
+    //   'https://www.whispurr.net',
+    // ],
     methods: ['GET', 'POST'],
     credentials: true,
   },
