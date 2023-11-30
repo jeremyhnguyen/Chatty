@@ -21,7 +21,6 @@ export function Chat() {
   const [socket, setSocket] = useState<Socket>();
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
-  // const [isLoading, setIsLoading] = useState(false);
   const { isConnected, user } = useContext(AppContext);
 
   const chatContainerRef = useRef<HTMLUListElement>(null);
@@ -30,16 +29,9 @@ export function Chat() {
   useEffect(() => {
     const newSocket = io();
     setSocket(newSocket);
-    fetchMessages(); // test
-    newSocket.on("chat message", (log: Log) => {
-      // const dateTime = getDateAndTime();
-      setLogs((prevLogs) => [...prevLogs, log]);
-      // const newLog: Log = {
-      //   userId: log.userId,
-      //   body: log.body,
-      //   sentAt: log.sentAt,
-      // };
-      // setLogs([...logs, newLog]);
+    fetchMessages();
+    newSocket.on("chat message", () => {
+      fetchMessages();
       setInput("");
     });
 
@@ -55,26 +47,21 @@ export function Chat() {
   }, [logs]);
 
   useLayoutEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+    if (lastChatRef.current) {
+      lastChatRef.current.scrollIntoView(false);
     }
   }, [logs]);
 
-  //
   async function fetchMessages() {
     try {
       const response = await fetch("/api/messageLog");
       if (!response.ok) throw new Error(`fetch error:, ${response.status}`);
       const messageLog = await response.json();
       setLogs(messageLog);
-      // setLogs((prevLogs) => [...prevLogs, ...messageLog]);
     } catch (error) {
       console.error(error);
     }
   }
-  // fetchMessages();
-  //
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,9 +74,40 @@ export function Chat() {
         body: JSON.stringify({ userId: user?.userId, body: input }),
       });
       socket.emit("chat message", input);
-      // socket.emit("chat message", { input, userId }); // how to get userId value:object
     }
   };
+
+  function formatTimeStamp(timezonetz) {
+    const messageDate = new Date(timezonetz);
+    const currentDate = new Date();
+
+    const isSameDay = messageDate.getDate() === currentDate.getDate();
+    const isYesterday = messageDate.getDate() === currentDate.getDate() - 1;
+
+    if (isSameDay) {
+      const formattedTime = new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(messageDate);
+      return `Today at ${formattedTime}`;
+    } else if (isYesterday) {
+      const formattedTime = new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(messageDate);
+      return `Yesterday at ${formattedTime}`;
+    } else {
+      const formattedDate = new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+      }).format(messageDate);
+      const formattedTime = new Intl.DateTimeFormat("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(messageDate);
+      return `${formattedDate} at ${formattedTime}`;
+    }
+  }
 
   return (
     <>
@@ -108,7 +126,9 @@ export function Chat() {
                 <span className="text-sm font-bold">
                   {log?.username ?? "Guest"}
                 </span>
-                <span className="text-[8px] text-[#8d8d8d]">{log.sentAt}</span>
+                <span className="ml-1 text-[8px] text-[#8d8d8d]">
+                  {formatTimeStamp(log.sentAt)}
+                </span>
               </h1>
               <div>
                 <p className="break-words text-sm text-black dark:text-[#e5e5e5]">
