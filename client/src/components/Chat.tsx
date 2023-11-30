@@ -88,51 +88,8 @@ export function Chat() {
       });
       socket.emit("chat message", input);
       // socket.emit("chat message", { input, userId }); // how to get userId value:object
-
-      // socket.once("chat message", (log: string) => {
-      //   console.log("chatted", log);
-      //   const dateTime = getDateAndTime();
-
-      //   const newLog: Log = {
-      //     message: log,
-      //     dateTime: `${dateTime.date} at ${dateTime.time}`,
-      //   };
-      //   setLogs((prevLogs) => {
-      //     console.log("log", logs);
-      //     console.log("prevLog", prevLogs);
-
-      //     return [...prevLogs, newLog];
-      //   }); // Why?
-      //   // setLogs([...logs, newLog]);
-      // });
-      // setInput("");
     }
   };
-
-  // function getDateAndTime() {
-  //   const currentDate = new Date();
-  //   const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-  //   const day = currentDate.getDate().toString().padStart(2, "0");
-  //   const year = currentDate.getFullYear();
-  //   let hours = currentDate.getHours();
-  //   const minutes = currentDate.getMinutes();
-  //   const ampm = hours >= 12 ? "PM" : "AM";
-  //   hours = hours % 12;
-  //   hours = hours ? hours : 12;
-  //   const formattedHours = hours.toString().padStart(2, "0");
-  //   const formattedDate = `${month}/${day}/${year}`;
-  //   const formattedTime = `${formattedHours}:${minutes
-  //     .toString()
-  //     .padStart(2, "0")}${ampm}`;
-
-  //   const today: string = new Date().toLocaleDateString();
-  //   const showDate: boolean = today !== formattedDate;
-
-  // return {
-  //   date: showDate ? formattedDate : "",
-  //   time: formattedTime,
-  // };
-  // }
 
   return (
     <>

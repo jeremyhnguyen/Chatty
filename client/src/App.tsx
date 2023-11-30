@@ -31,6 +31,12 @@ export default function App() {
       setUser(a.user);
       setToken(a.token);
     }
+
+    const connection = localStorage.getItem("connection");
+    if (connection) {
+      setIsConnected(connection === "true" ? true : false);
+    }
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
@@ -57,18 +63,23 @@ export default function App() {
   //
   function onConnect() {
     setIsConnected(true);
+    localStorage.setItem("connection", "true");
   }
 
   function onDisconnect() {
     setIsConnected(false);
+    localStorage.setItem("connection", "false");
   }
 
   function handleConnections(toConnect: boolean): void {
     if (toConnect) {
       socket.connect();
       setIsConnected(true);
+      localStorage.setItem("connection", "true");
     } else {
       socket.disconnect();
+      localStorage.setItem("connection", "false");
+
       handleSignOut();
     }
   }
