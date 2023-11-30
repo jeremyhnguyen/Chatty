@@ -8,7 +8,6 @@ import { Server } from 'socket.io';
 import cors from 'cors';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
-import { eiows } from 'eiows';
 
 type User = {
   userId: number;
@@ -37,7 +36,6 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-  wsEngine: eiows.Server,
   cors: {
     // origin: '*',
     origin: [
