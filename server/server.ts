@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { createServer } from 'http';
+import { createServer } from 'https';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import { Server } from 'socket.io';
@@ -34,9 +34,9 @@ const db = new pg.Pool({
 });
 
 const app = express();
-const httpServer = createServer(app);
+const httpsServer = createServer(app);
 
-const io = new Server(httpServer, {
+const io = new Server(httpsServer, {
   cors: {
     origin: '*',
     // origin: [
@@ -57,8 +57,8 @@ io.on('connection', (socket) => {
   });
 });
 
-httpServer.listen(8081, () => {
-  console.log('httpServer listening on port 8081');
+httpsServer.listen(443, () => {
+  console.log('httpsServer listening on port 8081');
 });
 
 // Create paths for static directories
