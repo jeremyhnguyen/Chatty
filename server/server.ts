@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
@@ -60,26 +59,16 @@ httpServer.listen(8081, () => {
   console.log('httpServer listening on port 8081');
 });
 
-// 8081 for socket server
-
 // Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
 app.use(cors());
 app.use(express.static(reactStaticDir));
+
 // Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
-
-// app.get('/api/hello', async (req, res) => {
-//   res.json({ connectionString, message: 'Hi' });
-// });
-
-// app.get('/api/info', async (req, res) => {
-//   const result = await db.query('select * from users');
-//   res.json({ connectionString, users: result.rows });
-// });
 
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {

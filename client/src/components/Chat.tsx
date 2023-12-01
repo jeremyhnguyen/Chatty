@@ -65,6 +65,7 @@ export function Chat() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log({ input, socket, isConnected });
     if (input && socket && isConnected) {
       await fetch("/api/messages", {
         method: "POST",

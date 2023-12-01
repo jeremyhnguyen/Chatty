@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { User, Auth } from "../api";
 
-export type Theme = "light" | "dark"; // light/dark mode
+export type Theme = "light" | "dark";
 
 type ContextProps = {
   theme: Theme;

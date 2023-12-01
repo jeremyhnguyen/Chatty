@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react"; // add useContext import
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Chat } from "./components/Chat";
 import { io } from "socket.io-client";
 import { NavBar } from "./components/NavBar";
@@ -6,8 +6,6 @@ import { LandingPage } from "./components/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import { AppContext, type Theme } from "./components/AppContext";
 import { User, Auth } from "./api";
-// import { socket } from "./socket";
-// import { Events } from "./components/Events";
 
 const socket = io();
 
@@ -19,7 +17,6 @@ export default function App() {
   const [user, setUser] = useState<User>();
   const [theme, setTheme] = useState<Theme>("dark");
 
-  // useContext() {} //need this to serve logo images
   useLayoutEffect(() => {
     document.documentElement.className = theme;
   }, [theme]);
@@ -60,7 +57,6 @@ export default function App() {
     setTheme("dark");
   }
 
-  //
   function onConnect() {
     setIsConnected(true);
     localStorage.setItem("connection", "true");

@@ -8,7 +8,7 @@ export function LandingPage() {
   const navigate = useNavigate();
   const { handleSignIn, handleConnections } = useContext(AppContext);
   const [isOpen, setIsOpen] = useState(false);
-  //
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
