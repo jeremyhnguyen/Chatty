@@ -72,6 +72,44 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
+app.get('/api/gifs/trending', async (req, res, next) => {
+  try {
+    const trendingGifs = await fetch(
+      `http://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=16`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const result = await trendingGifs.json();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/gifs/search', async (req, res, next) => {
+  try {
+    const q = req.query.q as string;
+    if (q?.length < 1) throw new ClientError(401, 'query cannot be empty');
+    const searchedGifs = await fetch(
+      `http://api.giphy.com/v1/gifs/search?q=${q}&api_key=${process.env.GIPHY_API_KEY}&limit=16`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const result = await searchedGifs.json();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
     const { username, password } = req.body as Partial<Auth>;
@@ -125,11 +163,15 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
 
 app.post('/api/messages', async (req, res, next) => {
   try {
-    const { userId, body } = req.body as { userId: number; body: string };
-    const params = [userId, body];
+    const { userId, body, isGif } = req.body as {
+      userId: number;
+      body: string;
+      isGif: boolean;
+    };
+    const params = [userId, body, isGif];
     const sql = `
-           INSERT into "messages" ("userId", "body")
-           values ($1, $2)
+           INSERT into "messages" ("userId", "body", "isGif")
+           values ($1, $2, $3)
            returning *
          `;
     const result = await db.query(sql, params);
@@ -147,6 +189,7 @@ app.get('/api/messageLog', async (req, res, next) => {
     "messages"."messageId",
     "messages"."body",
     "messages"."sentAt",
+    "messages"."isGif",
     "users"."username"
   from "messages" LEFT JOIN "users" USING ("userId")
   ORDER BY "messageId"

@@ -1,4 +1,3 @@
-// import { socket } from "../socket";
 import { BiSolidSend } from "react-icons/bi";
 import {
   useState,
@@ -15,16 +14,50 @@ type Log = {
   messageId: number;
   body: string;
   sentAt: string;
+  isGif: boolean;
 };
+import { MdOutlineGifBox } from "react-icons/md";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function Chat() {
   const [socket, setSocket] = useState<Socket>();
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
   const { isConnected, user } = useContext(AppContext);
-
+  const [gifs, setGifs] = useState<any>();
+  const [isOpen, setIsOpen] = useState(false);
   const chatContainerRef = useRef<HTMLUListElement>(null);
   const lastChatRef = useRef<HTMLLIElement>(null);
+
+  const [query, setQuery] = useState("");
+
+  async function handleGetTrending() {
+    if (isOpen) {
+      setIsOpen(false);
+      return;
+    }
+
+    try {
+      setIsOpen(true);
+      const res = await fetch("/api/gifs/trending");
+      if (!res.ok) throw new Error(`failed to get gifs: ${res.status}`);
+      const gifs = await res.json();
+      setGifs(gifs);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function handleGifSearch() {
+    try {
+      const res = await fetch(`/api/gifs/search?q=${query}`);
+      if (!res.ok) throw new Error("wtf just happened");
+      const gifs = await res.json();
+      setGifs(gifs);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     const newSocket = io();
@@ -72,11 +105,36 @@ export function Chat() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: user?.userId, body: input }),
+        body: JSON.stringify({
+          userId: user?.userId,
+          body: input,
+          isGif: false,
+        }),
       });
       socket.emit("chat message", input);
     }
   };
+
+  async function handleGifClick(gifUrl: string) {
+    if (!socket || !isConnected) return;
+
+    console.log("clicked");
+    await fetch("/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user?.userId,
+        body: gifUrl,
+        isGif: true,
+      }),
+    });
+    setIsOpen(false);
+    setGifs(undefined);
+    setQuery("");
+    socket.emit("chat message", gifUrl);
+  }
 
   function formatTimeStamp(timezonetz) {
     const messageDate = new Date(timezonetz);
@@ -132,9 +190,16 @@ export function Chat() {
                 </span>
               </h1>
               <div>
-                <p className="break-words text-sm text-black dark:text-[#e5e5e5]">
-                  {log.body}
-                </p>
+                {!log.isGif ? (
+                  <p className="break-words text-sm text-black dark:text-[#e5e5e5]">
+                    {log.body}
+                  </p>
+                ) : (
+                  <img
+                    src={log.body}
+                    className="mt-2 max-h-[10rem] rounded-md"
+                  />
+                )}
               </div>
             </li>
           ))}
@@ -143,24 +208,63 @@ export function Chat() {
       <form
         id="form"
         onSubmit={handleSubmit}
-        className="fixed bottom-0 left-0 right-0 flex h-[3.4rem] gap-2 bg-slate-400/10 p-1.5 backdrop-blur-sm dark:bg-black/10"
+        className="fixed bottom-0 left-0 right-0 flex flex-col gap-2 bg-[#f7f7f7] dark:bg-[#252526]"
       >
-        <input
-          id="input"
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Message"
-          autoComplete="off"
-          className="m-0.5 grow rounded-lg bg-[f7f7f7] pl-3 focus:outline-[#666666] dark:bg-[#333333]"
-        />
-        <button
-          type="submit"
-          className="flex w-10 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
-          disabled={!isConnected}
-        >
-          <BiSolidSend />
-        </button>
+        <section className="flex h-[3rem] w-full items-center gap-x-2 p-1.5">
+          <div className="flex h-full w-full items-center rounded-lg bg-white pl-4 pr-2 focus-within:ring-2 focus-within:ring-[#666666] dark:bg-[#333333]">
+            <input
+              id="input"
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Message"
+              autoComplete="off"
+              className="w-full bg-transparent outline-none"
+            />
+            <button onClick={handleGetTrending}>
+              <MdOutlineGifBox className="h-6 w-6 hover:cursor-pointer hover:text-green-400" />
+            </button>
+          </div>
+          <button
+            type="submit"
+            className="flex h-full w-10 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
+            disabled={!isConnected}
+          >
+            <BiSolidSend />
+          </button>
+        </section>
+        {isOpen && (
+          <section className="flex h-[20rem] w-full flex-col items-center border-t-2 border-[#e7e7e7] bg-[#f7f7f7] pt-2 dark:border-black dark:bg-[#252526]">
+            <div className="flex min-h-[3rem] w-full items-center gap-x-2 p-1.5">
+              <input
+                className="m-0.5 h-full grow rounded-lg bg-[f7f7f7] pl-3 outline-none focus:ring-2 focus:ring-[#666666] dark:bg-[#333333]"
+                value={query}
+                onChange={(e) => setQuery(e.currentTarget.value)}
+              />
+              <button
+                className="flex h-full w-9 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
+                onClick={handleGifSearch}
+                type="button"
+              >
+                <FaMagnifyingGlass />
+              </button>
+            </div>
+            <ul className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black">
+              {gifs &&
+                gifs.data.map((n) => (
+                  <li key={n.id} className="basis-1/2 md:basis-1/3">
+                    <img
+                      src={n.images.downsized_medium.url}
+                      className="w-full"
+                      onClick={() =>
+                        handleGifClick(n.images.downsized_medium.url)
+                      }
+                    />
+                  </li>
+                ))}
+            </ul>
+          </section>
+        )}
       </form>
     </>
   );
