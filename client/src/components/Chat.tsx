@@ -34,6 +34,7 @@ export function Chat() {
   async function handleGetTrending() {
     if (isOpen) {
       setIsOpen(false);
+      setQuery("");
       return;
     }
 
@@ -221,9 +222,9 @@ export function Chat() {
               autoComplete="off"
               className="w-full bg-transparent outline-none"
             />
-            <button onClick={handleGetTrending}>
-              <MdOutlineGifBox className="h-6 w-6 hover:cursor-pointer hover:text-green-400" />
-            </button>
+            <div onClick={handleGetTrending}>
+              <MdOutlineGifBox className="h-6 w-6 transition duration-500 ease-in-out hover:cursor-pointer hover:text-green-400" />
+            </div>
           </div>
           <button
             type="submit"
@@ -234,7 +235,7 @@ export function Chat() {
           </button>
         </section>
         {isOpen && (
-          <section className="flex h-[20rem] w-full flex-col items-center border-t-2 border-[#e7e7e7] bg-[#f7f7f7] pt-2 dark:border-black dark:bg-[#252526]">
+          <section className="flex h-[30rem] w-full flex-col items-center border-t-2 border-[#e7e7e7] bg-[#f7f7f7] pt-2 dark:border-black dark:bg-[#252526]">
             <div className="flex min-h-[3rem] w-full items-center gap-x-2 p-1.5">
               <input
                 className="m-0.5 h-full grow rounded-lg bg-[f7f7f7] pl-3 outline-none focus:ring-2 focus:ring-[#666666] dark:bg-[#333333]"
