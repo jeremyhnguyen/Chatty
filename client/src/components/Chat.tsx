@@ -198,7 +198,7 @@ export function Chat() {
                 ) : (
                   <img
                     src={log.body}
-                    className="mt-2 max-h-[10rem] rounded-md"
+                    className="mt-2 max-h-[10rem] rounded-md lg:max-h-[20rem]"
                   />
                 )}
               </div>
@@ -228,7 +228,7 @@ export function Chat() {
           </div>
           <button
             type="submit"
-            className="flex h-full w-10 items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
+            className=" flex h-full w-10 max-w-[36px] items-center justify-center rounded-md border border-solid border-transparent bg-[#6ba9ff] text-white transition duration-300 ease-in-out hover:border-[#fff] hover:bg-[#5b94e3] dark:bg-[#3d81e0] dark:hover:bg-[#136eed]"
             disabled={!isConnected}
           >
             <BiSolidSend />
@@ -240,6 +240,7 @@ export function Chat() {
               <input
                 className="m-0.5 h-full grow rounded-lg bg-[f7f7f7] pl-3 outline-none focus:ring-2 focus:ring-[#666666] dark:bg-[#333333]"
                 value={query}
+                placeholder="Search GIPHY"
                 onChange={(e) => setQuery(e.currentTarget.value)}
               />
               <button
@@ -250,13 +251,16 @@ export function Chat() {
                 <FaMagnifyingGlass />
               </button>
             </div>
-            <ul className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black">
+            <ul className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap lg:overflow-y-hidden lg:overflow-x-scroll">
               {gifs &&
                 gifs.data.map((n) => (
-                  <li key={n.id} className="basis-1/2 md:basis-1/3">
+                  <li
+                    key={n.id}
+                    className="center basis-1/2 md:basis-1/3 lg:mr-2 lg:h-[380px] lg:min-h-full lg:w-[400px] lg:object-cover"
+                  >
                     <img
                       src={n.images.downsized_medium.url}
-                      className="w-full"
+                      className="h-full object-cover lg:min-w-[400px]"
                       onClick={() =>
                         handleGifClick(n.images.downsized_medium.url)
                       }
