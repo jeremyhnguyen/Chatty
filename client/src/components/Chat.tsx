@@ -1,3 +1,6 @@
+// scroll Y useEffect & useLayoutEffect currently buggy after GIPHY implementation
+// scroll X on large screens not yet working for the GIF UL
+
 import { BiSolidSend } from "react-icons/bi";
 import {
   useState,
@@ -251,7 +254,10 @@ export function Chat() {
                 <FaMagnifyingGlass />
               </button>
             </div>
-            <ul className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap lg:overflow-y-hidden lg:overflow-x-scroll">
+            <ul
+              className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap lg:overflow-y-hidden lg:overflow-x-scroll"
+              ref={chatContainerRef}
+            >
               {gifs &&
                 gifs.data.map((n) => (
                   <li
@@ -260,7 +266,7 @@ export function Chat() {
                   >
                     <img
                       src={n.images.downsized_medium.url}
-                      className="h-full object-cover lg:min-w-[400px]"
+                      className="h-full cursor-pointer object-cover lg:w-full lg:min-w-[400px]"
                       onClick={() =>
                         handleGifClick(n.images.downsized_medium.url)
                       }
