@@ -2,13 +2,7 @@
 // scroll X on large screens not yet working for the GIF UL
 
 import { BiSolidSend } from "react-icons/bi";
-import {
-  useState,
-  useContext,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-} from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
 import { io, Socket } from "socket.io-client";
 
@@ -30,7 +24,7 @@ export function Chat() {
   const [gifs, setGifs] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const chatContainerRef = useRef<HTMLUListElement>(null);
-  const lastChatRef = useRef<HTMLLIElement>(null);
+  // const lastChatRef = useRef<HTMLLIElement>(null);
 
   const [query, setQuery] = useState("");
 
@@ -77,16 +71,21 @@ export function Chat() {
     };
   }, []);
 
-  useEffect(() => {
-    if (lastChatRef.current) {
-      lastChatRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [logs]);
+  // useEffect(() => {
+  //   if (lastChatRef.current) {
+  //     lastChatRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [logs]);
 
-  useLayoutEffect(() => {
-    if (lastChatRef.current) {
-      lastChatRef.current.scrollIntoView(false);
-    }
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+    console.log("scroll useEffect");
+    chatContainerRef.current.scrollIntoView(false);
+    // lastChatRef.current.scrollTo({
+    //   top: 0,
+    //   behavior: "instant",
+    // });
+    // window.scrollBy(0, window.innerHeight);
   }, [logs]);
 
   async function fetchMessages() {
@@ -102,7 +101,6 @@ export function Chat() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ input, socket, isConnected });
     if (input && socket && isConnected) {
       await fetch("/api/messages", {
         method: "POST",
@@ -117,12 +115,12 @@ export function Chat() {
       });
       socket.emit("chat message", input);
     }
+    setIsOpen(false);
   };
 
   async function handleGifClick(gifUrl: string) {
     if (!socket || !isConnected) return;
 
-    console.log("clicked");
     await fetch("/api/messages", {
       method: "POST",
       headers: {
@@ -172,6 +170,14 @@ export function Chat() {
     }
   }
 
+  // function handleCloseGifs() {
+  //   const midWindow = window.innerHeight / 2;
+  //   if (window) setIsOpen(false);
+  // }
+  //         if (event.clientY > middleHalf) {
+
+  // working on closing GIF menu on div click
+
   return (
     <>
       <div className="overflow-y-scroll bg-[#f7f7f7] dark:bg-[#242526]">
@@ -183,7 +189,6 @@ export function Chat() {
             <li
               key={index}
               className="mr-5 flex flex-col px-[0.2rem] py-[0.5rem]"
-              ref={logs.length - 1 === index ? lastChatRef : null}
             >
               <h1 className="leading-tight">
                 <span className="text-sm font-bold">
@@ -255,7 +260,7 @@ export function Chat() {
               </button>
             </div>
             <ul
-              className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap lg:overflow-y-hidden lg:overflow-x-scroll"
+              className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap  lg:overflow-x-scroll"
               ref={chatContainerRef}
             >
               {gifs &&
@@ -267,6 +272,7 @@ export function Chat() {
                     <img
                       src={n.images.downsized_medium.url}
                       className="h-full cursor-pointer object-cover lg:w-full lg:min-w-[400px]"
+                      loading="eager"
                       onClick={() =>
                         handleGifClick(n.images.downsized_medium.url)
                       }
