@@ -77,6 +77,10 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
+app.get('/api/test', (req, res) => {
+  res.json({ httpserver: httpServer, serverport: process.env.PORT });
+});
+
 app.get('/api/gifs/trending', async (req, res, next) => {
   try {
     const trendingGifs = await fetch(
