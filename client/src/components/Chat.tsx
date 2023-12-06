@@ -67,12 +67,13 @@ export function Chat() {
         chatContainerRef.current?.scrollIntoView(false);
       }
     }
-    const newSocket = io("http://chatty-dev.us-west-2.elasticbeanstalk.com");
+    const newSocket = io();
     setSocket(newSocket);
     loadMsg();
 
-    newSocket.on("chat message", () => {
-      loadMsg();
+    newSocket.on("chat message", (data) => {
+      console.log(data);
+      setLogs((prev) => [...prev, { ...data, sentAt: Date.now() }]);
       setInput("");
     });
 
@@ -113,7 +114,11 @@ export function Chat() {
           isGif: false,
         }),
       });
-      socket.emit("chat message", input);
+      socket.emit("chat message", {
+        username: user?.username,
+        body: input,
+        isGif: false,
+      });
     }
     setIsOpen(false);
   };
@@ -135,7 +140,11 @@ export function Chat() {
     setIsOpen(false);
     setGifs(undefined);
     setQuery("");
-    socket.emit("chat message", gifUrl);
+    socket.emit("chat message", {
+      username: user?.username,
+      body: gifUrl,
+      isGif: true,
+    });
   }
 
   function formatTimeStamp(timezonetz) {

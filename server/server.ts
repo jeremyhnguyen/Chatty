@@ -52,6 +52,11 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
   console.log('user connected');
+
+  socket.on('chat message', (data) => {
+    io.emit('chat message', data);
+  });
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
@@ -174,8 +179,7 @@ app.post('/api/messages', async (req, res, next) => {
            values ($1, $2, $3)
            returning *
          `;
-    const result = await db.query(sql, params);
-    io.emit('chat message', result.rows[0]);
+    await db.query(sql, params);
     res.sendStatus(201);
   } catch (error) {
     next(error);
