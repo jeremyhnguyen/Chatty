@@ -71,16 +71,18 @@ export function Chat() {
     setSocket(newSocket);
     loadMsg();
 
-    newSocket.on("chat message", (data) => {
-      console.log(data);
-      setLogs((prev) => [...prev, { ...data, sentAt: Date.now() }]);
-      setInput("");
-    });
-
     return () => {
       newSocket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    socket?.on("server response", (data) => {
+      console.log(data);
+      setLogs([...logs, { ...data, sentAt: Date.now() }]);
+      setInput("");
+    });
+  }, [socket, logs]);
 
   useEffect(() => {
     chatContainerRef.current?.scrollIntoView();
