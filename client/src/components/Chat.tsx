@@ -68,6 +68,7 @@ export function Chat() {
       }
     }
     const newSocket = io();
+    console.log(newSocket);
     setSocket(newSocket);
     loadMsg();
 
@@ -77,6 +78,7 @@ export function Chat() {
   }, []);
 
   useEffect(() => {
+    console.log(socket);
     socket?.on("server response", (data) => {
       console.log(data);
       setLogs([...logs, { ...data, sentAt: Date.now() }]);
