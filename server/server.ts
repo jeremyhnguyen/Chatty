@@ -75,7 +75,7 @@ app.use(express.json());
 app.get('/api/gifs/trending', async (req, res, next) => {
   try {
     const trendingGifs = await fetch(
-      `http://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=16`,
+      `https://api.giphy.com/v1/gifs/trending?api_key=${process.env.GIPHY_API_KEY}&limit=16`,
       {
         method: 'GET',
         headers: {
@@ -95,7 +95,7 @@ app.get('/api/gifs/search', async (req, res, next) => {
     const q = req.query.q as string;
     if (q?.length < 1) throw new ClientError(401, 'query cannot be empty');
     const searchedGifs = await fetch(
-      `http://api.giphy.com/v1/gifs/search?q=${q}&api_key=${process.env.GIPHY_API_KEY}&limit=16`,
+      `https://api.giphy.com/v1/gifs/search?q=${q}&api_key=${process.env.GIPHY_API_KEY}&limit=16`,
       {
         method: 'GET',
         headers: {
