@@ -67,7 +67,7 @@ export function Chat() {
         chatContainerRef.current?.scrollIntoView(false);
       }
     }
-    const newSocket = io("https://whispurr.net:8081");
+    const newSocket = io("https://whispurr.net");
     console.log(newSocket);
     setSocket(newSocket);
     loadMsg();
