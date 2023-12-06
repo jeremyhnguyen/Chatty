@@ -67,7 +67,7 @@ export function Chat() {
         chatContainerRef.current?.scrollIntoView(false);
       }
     }
-    const newSocket = io();
+    const newSocket = io("http://chatty-dev.us-west-2.elasticbeanstalk.com");
     setSocket(newSocket);
     loadMsg();
 
