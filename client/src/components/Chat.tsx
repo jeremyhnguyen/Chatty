@@ -23,7 +23,7 @@ export function Chat() {
   const { isConnected, user } = useContext(AppContext);
   const [gifs, setGifs] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
-  const chatContainerRef = useRef<HTMLUListElement>(null);
+  const chatContainerRef = useRef<HTMLLIElement>(null);
   // const lastChatRef = useRef<HTMLLIElement>(null);
 
   const [query, setQuery] = useState("");
@@ -58,11 +58,21 @@ export function Chat() {
   }
 
   useEffect(() => {
+    async function loadMsg() {
+      try {
+        await fetchMessages();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        chatContainerRef.current?.scrollIntoView(false);
+      }
+    }
     const newSocket = io();
     setSocket(newSocket);
-    fetchMessages();
+    loadMsg();
+
     newSocket.on("chat message", () => {
-      fetchMessages();
+      loadMsg();
       setInput("");
     });
 
@@ -72,31 +82,21 @@ export function Chat() {
   }, []);
 
   // useEffect(() => {
-  //   if (lastChatRef.current) {
-  //     lastChatRef.current.scrollIntoView({ behavior: "smooth" });
+  //   chatContainerRef.current?.scrollIntoView();
+  // }, [logs]);
+
+  // useEffect(() => {
+  //   if (chatContainerRef.current && logs.length > 0) {
+  //     const lastMessage = chatContainerRef.current.lastChild as HTMLElement;
+  //     lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
   //   }
   // }, [logs]);
 
-  useEffect(() => {
-    if (!chatContainerRef.current) return;
-    console.log("scroll useEffect");
-    chatContainerRef.current.scrollIntoView(false);
-    // lastChatRef.current.scrollTo({
-    //   top: 0,
-    //   behavior: "instant",
-    // });
-    // window.scrollBy(0, window.innerHeight);
-  }, [logs]);
-
   async function fetchMessages() {
-    try {
-      const response = await fetch("/api/messageLog");
-      if (!response.ok) throw new Error(`fetch error:, ${response.status}`);
-      const messageLog = await response.json();
-      setLogs(messageLog);
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await fetch("/api/messageLog");
+    if (!response.ok) throw new Error(`fetch error:, ${response.status}`);
+    const messageLog = await response.json();
+    setLogs(messageLog);
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,11 +180,8 @@ export function Chat() {
 
   return (
     <>
-      <div className="overflow-y-scroll bg-[#f7f7f7] dark:bg-[#242526]">
-        <ul
-          className="mb-4 flex w-full list-none flex-col pb-12 pl-6 pt-2 text-left text-blue-400 dark:text-blue-200"
-          ref={chatContainerRef}
-        >
+      <div className="bg-[#f7f7f7] dark:bg-[#242526]">
+        <ul className="mb-4 flex list-none flex-col overflow-y-scroll pl-6 pt-2 text-left text-blue-400 dark:text-blue-200">
           {logs.map((log, index) => (
             <li
               key={index}
@@ -212,6 +209,7 @@ export function Chat() {
               </div>
             </li>
           ))}
+          <li key="view" className="pb-12" ref={chatContainerRef} />
         </ul>
       </div>
       <form
@@ -259,15 +257,12 @@ export function Chat() {
                 <FaMagnifyingGlass />
               </button>
             </div>
-            <ul
-              className="mt-2 flex flex-wrap items-center overflow-y-scroll border-t-2 border-[#e7e7e7] px-2 pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0 lg:flex-nowrap  lg:overflow-x-scroll"
-              ref={chatContainerRef}
-            >
+            <ul className="mt-2 flex flex-wrap items-center justify-center overflow-y-scroll border-t-2 border-[#e7e7e7] pt-4 dark:border-black lg:max-h-[400px] lg:flex-shrink-0">
               {gifs &&
                 gifs.data.map((n) => (
                   <li
                     key={n.id}
-                    className="center basis-1/2 md:basis-1/3 lg:mr-2 lg:h-[380px] lg:min-h-full lg:w-[400px] lg:object-cover"
+                    className="basis-1/2 md:basis-1/3 lg:mr-2 lg:h-[380px] lg:min-h-full lg:w-[400px] lg:basis-1/5 lg:object-cover"
                   >
                     <img
                       src={n.images.downsized_medium.url}
