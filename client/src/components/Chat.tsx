@@ -81,9 +81,9 @@ export function Chat() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   chatContainerRef.current?.scrollIntoView();
-  // }, [logs]);
+  useEffect(() => {
+    chatContainerRef.current?.scrollIntoView();
+  }, [logs]);
 
   // useEffect(() => {
   //   if (chatContainerRef.current && logs.length > 0) {
