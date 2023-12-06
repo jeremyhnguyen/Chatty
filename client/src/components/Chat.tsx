@@ -77,14 +77,11 @@ export function Chat() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(socket);
-    socket?.on("server response", (data) => {
-      console.log(data);
-      setLogs([...logs, { ...data, sentAt: Date.now() }]);
-      setInput("");
-    });
-  }, [socket, logs]);
+  socket?.on("server response", (data) => {
+    console.log(data);
+    setLogs([...logs, { ...data, sentAt: Date.now() }]);
+    setInput("");
+  });
 
   useEffect(() => {
     chatContainerRef.current?.scrollIntoView();
