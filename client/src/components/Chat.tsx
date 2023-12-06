@@ -77,11 +77,13 @@ export function Chat() {
     };
   }, []);
 
-  socket?.on("server response", (data) => {
-    console.log(data);
-    setLogs([...logs, { ...data, sentAt: Date.now() }]);
-    setInput("");
-  });
+  useEffect(() => {
+    socket?.on("server response", (data) => {
+      console.log(data);
+      setLogs([...logs, { ...data, sentAt: Date.now() }]);
+      setInput("");
+    });
+  }, [logs, socket]);
 
   useEffect(() => {
     chatContainerRef.current?.scrollIntoView();
@@ -104,6 +106,8 @@ export function Chat() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input && socket && isConnected) {
+      console.log(socket);
+      console.log("sent");
       await fetch("/api/messages", {
         method: "POST",
         headers: {
