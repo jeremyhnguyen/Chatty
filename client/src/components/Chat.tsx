@@ -4,7 +4,6 @@
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
-import { io, Socket } from "socket.io-client";
 
 type Log = {
   username: string;
@@ -17,10 +16,10 @@ import { MdOutlineGifBox } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function Chat() {
-  const [socket, setSocket] = useState<Socket>();
+  // const [socket, setSocket] = useState<Socket>();
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
-  const { isConnected, user } = useContext(AppContext);
+  const { isConnected, user, socket } = useContext(AppContext);
   const [gifs, setGifs] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const chatContainerRef = useRef<HTMLLIElement>(null);
@@ -67,13 +66,13 @@ export function Chat() {
         chatContainerRef.current?.scrollIntoView(false);
       }
     }
-    const newSocket = io("http://chatty-dev.us-west-2.elasticbeanstalk.com");
-    console.log(newSocket);
-    setSocket(newSocket);
+    // const newSocket = io();
+    // console.log(newSocket);
+    // setSocket(newSocket);
     loadMsg();
 
     return () => {
-      newSocket.disconnect();
+      // newSocket.disconnect();
     };
   }, []);
 

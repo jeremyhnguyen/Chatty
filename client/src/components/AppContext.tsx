@@ -4,6 +4,7 @@ import { User, Auth } from "../api";
 export type Theme = "light" | "dark";
 
 type ContextProps = {
+  socket: any;
   theme: Theme;
   setTheme: (theme: Theme) => void;
   isConnected: boolean;
@@ -16,6 +17,7 @@ type ContextProps = {
 
 export const AppContext = createContext<ContextProps>({
   theme: "dark",
+  socket: undefined,
   setTheme: () => undefined,
   isConnected: false,
   handleConnections: () => undefined,

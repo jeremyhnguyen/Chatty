@@ -7,7 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import { AppContext, type Theme } from "./components/AppContext";
 import { User, Auth } from "./api";
 
-const socket = io("http://chatty-dev.us-west-2.elasticbeanstalk.com");
+const socket = io();
 
 const tokenKey = "react-context-jwt";
 
@@ -83,6 +83,7 @@ export default function App() {
   const contextValues = {
     theme,
     setTheme,
+    socket,
     isConnected,
     handleConnections,
     user,
