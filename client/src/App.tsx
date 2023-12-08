@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Chat } from "./components/Chat";
-import { io } from "socket.io-client";
+import { connect } from "socket.io-client";
 import { NavBar } from "./components/NavBar";
 import { LandingPage } from "./components/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import { AppContext, type Theme } from "./components/AppContext";
 import { User, Auth } from "./api";
 
-const socket = io("http://chatty-dev.us-west-2.elasticbeanstalk.com:8081");
+const socket = connect();
 
 const tokenKey = "react-context-jwt";
 
