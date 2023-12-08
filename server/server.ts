@@ -37,7 +37,6 @@ const app = express();
 const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
-  path: 'http://chatty-dev.us-west-2.elasticbeanstalk.com:8081',
   cors: {
     origin: '*',
     // origin: [
@@ -46,7 +45,6 @@ const io = new Server(httpServer, {
     //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
     //   'https://www.whispurr.net',
     // ],
-    methods: ['GET', 'POST'],
     credentials: true,
   },
 });
