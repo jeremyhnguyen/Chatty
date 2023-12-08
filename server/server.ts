@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
   });
 });
 
-httpServer.listen(8081, () => {
+httpServer.listen(3000, () => {
   console.log('httpServer listening on port 8081');
 });
 
