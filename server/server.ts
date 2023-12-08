@@ -61,8 +61,8 @@ io.on('connection', (socket) => {
   });
 });
 
-httpServer.listen(3000, () => {
-  console.log('httpServer listening on port 8081');
+httpServer.listen(process.env.SOCKET_PORT, () => {
+  console.log('httpServer listening on port 3000');
 });
 
 // Create paths for static directories
