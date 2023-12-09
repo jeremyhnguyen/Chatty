@@ -1,3 +1,5 @@
+// running test after wiping dist directory
+
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
