@@ -1,6 +1,3 @@
-// scroll Y useEffect & useLayoutEffect currently buggy after GIPHY implementation
-// scroll X on large screens not yet working for the GIF UL
-
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
