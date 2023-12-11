@@ -1,3 +1,8 @@
+// convert the GIF window to a modal
+// shows trending when opened + search & magnifying glass
+// if the search box is clicked, modal translateY to take up 80-90% of the screen w shader in the back(?)
+// if
+
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
@@ -13,14 +18,12 @@ import { MdOutlineGifBox } from "react-icons/md";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export function Chat() {
-  // const [socket, setSocket] = useState<Socket>();
   const [logs, setLogs] = useState<Log[]>([]);
   const [input, setInput] = useState("");
   const { isConnected, user, socket } = useContext(AppContext);
   const [gifs, setGifs] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const chatContainerRef = useRef<HTMLLIElement>(null);
-  // const lastChatRef = useRef<HTMLLIElement>(null);
 
   const [query, setQuery] = useState("");
 
@@ -63,13 +66,9 @@ export function Chat() {
         chatContainerRef.current?.scrollIntoView(false);
       }
     }
-    // const newSocket = io();
-    // setSocket(newSocket);
     loadMsg();
 
-    return () => {
-      // newSocket.disconnect();
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -82,13 +81,6 @@ export function Chat() {
   useEffect(() => {
     chatContainerRef.current?.scrollIntoView();
   }, [logs]);
-
-  // useEffect(() => {
-  //   if (chatContainerRef.current && logs.length > 0) {
-  //     const lastMessage = chatContainerRef.current.lastChild as HTMLElement;
-  //     lastMessage.scrollIntoView({ behavior: "smooth", block: "end" });
-  //   }
-  // }, [logs]);
 
   async function fetchMessages() {
     const response = await fetch("/api/messageLog");
@@ -176,17 +168,12 @@ export function Chat() {
     }
   }
 
-  // function handleCloseGifs() {
-  //   const midWindow = window.innerHeight / 2;
-  //   if (window) setIsOpen(false);
-  // }
-  //         if (event.clientY > middleHalf) {
-
-  // working on closing GIF menu on div click
-
   return (
     <>
-      <div className="bg-[#f7f7f7] dark:bg-[#242526]">
+      <div
+        className="bg-[#f7f7f7] dark:bg-[#242526]"
+        onClick={() => setIsOpen(false)}
+      >
         <ul className="mb-4 flex list-none flex-col overflow-y-scroll pl-6 pt-2 text-left text-blue-400 dark:text-blue-200">
           {logs.map((log, index) => (
             <li
