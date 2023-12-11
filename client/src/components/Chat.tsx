@@ -56,6 +56,7 @@ export function Chat() {
   }
 
   useEffect(() => {
+    console.log(window.location.host);
     async function loadMsg() {
       try {
         await fetchMessages();

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { createServer } from 'http';
+// import { createServer } from 'http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import { Server } from 'socket.io';
@@ -18,8 +18,6 @@ type Auth = {
   password: string;
 };
 
-//
-
 const hashKey = process.env.TOKEN_SECRET;
 if (!hashKey) throw new Error('TOKEN_SECRET not found in .env');
 
@@ -34,7 +32,10 @@ const db = new pg.Pool({
 });
 
 const app = express();
-const httpServer = createServer(app);
+// const httpServer = createServer(app);
+const httpServer = app.listen(process.env.PORT, () => {
+  console.log(`\n\n app listening on port ${process.env.PORT}\n\n`);
+});
 
 const io = new Server(httpServer, {
   cors: {
@@ -61,9 +62,9 @@ io.on('connection', (socket) => {
   });
 });
 
-httpServer.listen(process.env.SOCKET_PORT, () => {
-  console.log('httpServer listening on port 3000');
-});
+// httpServer.listen(process.env.SOCKET_PORT, () => {
+//   console.log('httpServer listening on port 3000');
+// });
 
 // Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
@@ -222,7 +223,3 @@ app.get('/api/messageLog', async (req, res, next) => {
 app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
 
 app.use(errorMiddleware);
-
-app.listen(process.env.PORT, () => {
-  console.log(`\n\napp listening on port ${process.env.PORT}\n\n`);
-});

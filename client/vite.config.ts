@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:8080",
-      "/socket.io": "http://localhost:3000",
+      "/socket.io": "http://localhost:8080",
       "/images": "http://localhost:8080",
     },
   },
