@@ -1,5 +1,3 @@
-// running test after wiping dist directory
-
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
 import { AppContext } from "./AppContext";
@@ -56,7 +54,6 @@ export function Chat() {
   }
 
   useEffect(() => {
-    console.log(window.location.host);
     async function loadMsg() {
       try {
         await fetchMessages();
@@ -67,7 +64,6 @@ export function Chat() {
       }
     }
     // const newSocket = io();
-    // console.log(newSocket);
     // setSocket(newSocket);
     loadMsg();
 
@@ -78,7 +74,6 @@ export function Chat() {
 
   useEffect(() => {
     socket?.on("server response", (data) => {
-      console.log(data);
       setLogs([...logs, { ...data, sentAt: Date.now() }]);
       setInput("");
     });
@@ -105,8 +100,6 @@ export function Chat() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input && socket && isConnected) {
-      console.log(socket);
-      console.log("sent");
       await fetch("/api/messages", {
         method: "POST",
         headers: {
