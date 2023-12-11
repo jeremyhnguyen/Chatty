@@ -1,7 +1,5 @@
 import 'dotenv/config';
 import express from 'express';
-// import { createServer } from 'http';
-// import { createServer } from 'node:http';
 import pg from 'pg';
 import { ClientError, errorMiddleware } from './lib/index.js';
 import { Server } from 'socket.io';
@@ -33,7 +31,6 @@ const db = new pg.Pool({
 });
 
 const app = express();
-// const httpServer = createServer(app);
 const httpServer = app.listen(process.env.PORT, () => {
   console.log(`\n\n app listening on port ${process.env.PORT}\n\n`);
 });
@@ -41,12 +38,6 @@ const httpServer = app.listen(process.env.PORT, () => {
 const io = new Server(httpServer, {
   cors: {
     origin: '*',
-    // origin: [
-    //   'http://localhost:5173',
-    //   'http://127.0.0.1:5173',
-    //   'http://chatty-dev.us-west-2.elasticbeanstalk.com',
-    //   'https://www.whispurr.net',
-    // ],
     credentials: true,
   },
 });
@@ -63,18 +54,12 @@ io.on('connection', (socket) => {
   });
 });
 
-// httpServer.listen(process.env.SOCKET_PORT, () => {
-//   console.log('httpServer listening on port 3000');
-// });
-
-// Create paths for static directories
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
 app.use(cors());
 app.use(express.static(reactStaticDir));
 
-// Static directory for file uploads server/public/
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
@@ -210,17 +195,6 @@ app.get('/api/messageLog', async (req, res, next) => {
   }
 });
 
-/**
- * Serves React's index.html if no api route matches.
- *
- * Implementation note:
- * When the final project is deployed, this Express server becomes responsible
- * for serving the React files. (In development, the Vite server does this.)
- * When navigating in the client, if the user refreshes the page, the browser will send
- * the URL to this Express server instead of to React Router.
- * Catching everything that doesn't match a route and serving index.html allows
- * React Router to manage the routing.
- */
 app.get('*', (_req, res) => res.sendFile(`${reactStaticDir}/index.html`));
 
 app.use(errorMiddleware);

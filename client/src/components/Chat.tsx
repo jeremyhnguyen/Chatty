@@ -235,7 +235,7 @@ export function Chat() {
               className="w-full bg-transparent outline-none"
             />
             <div onClick={handleGetTrending}>
-              <MdOutlineGifBox className="h-6 w-6 transition duration-500 ease-in-out hover:cursor-pointer hover:text-green-400" />
+              <MdOutlineGifBox className="h-8 w-8 transition duration-500 ease-in-out hover:cursor-pointer hover:text-green-400" />
             </div>
           </div>
           <button
