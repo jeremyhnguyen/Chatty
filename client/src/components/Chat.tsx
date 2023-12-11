@@ -1,7 +1,6 @@
-// convert the GIF window to a modal
+// convert the GIF window search box to a button
 // shows trending when opened + search & magnifying glass
-// if the search box is clicked, modal translateY to take up 80-90% of the screen w shader in the back(?)
-// if
+// if the search box is clicked, GIF modal translateY to take up 80-90% of the screen w shader in the back(?)
 
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -214,7 +213,7 @@ export function Chat() {
           <div className="flex h-full w-full items-center rounded-lg bg-white pl-4 pr-2 focus-within:ring-2 focus-within:ring-[#666666] dark:bg-[#333333]">
             <input
               id="input"
-              type="text"
+              type="textarea"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Message"
