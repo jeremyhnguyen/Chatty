@@ -47,7 +47,7 @@ export function Chat() {
   async function handleGifSearch() {
     try {
       const res = await fetch(`/api/gifs/search?q=${query}`);
-      if (!res.ok) throw new Error("wtf just happened");
+      if (!res.ok) throw new Error("improper response");
       const gifs = await res.json();
       setGifs(gifs);
     } catch (err) {
@@ -221,7 +221,7 @@ export function Chat() {
               className="w-full bg-transparent outline-none"
             />
             <div onClick={handleGetTrending}>
-              <MdOutlineGifBox className="h-8 w-8 transition duration-500 ease-in-out hover:cursor-pointer hover:text-green-400" />
+              <MdOutlineGifBox className="h-9 w-9 transition duration-500 ease-in-out hover:cursor-pointer hover:text-green-400" />
             </div>
           </div>
           <button
