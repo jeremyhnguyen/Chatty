@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { AppContext } from "./AppContext";
 import { useNavigate } from "react-router-dom";
 
+// disconnect from the chatroom
+
 export function ConnectionManager() {
   const { handleConnections } = useContext(AppContext);
   const navigate = useNavigate();

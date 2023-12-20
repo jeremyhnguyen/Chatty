@@ -1,6 +1,11 @@
+// EXTRA
 // convert the GIF window search box to a button
 // shows trending when opened + search & magnifying glass
 // if the search box is clicked, GIF modal translateY to take up 80-90% of the screen w shader in the back(?)
+// add in error messages for creating same username
+// error message if username doesn't exist when logging in
+// comments on code for clarity
+// potential fix for GIF window: disable form for messaging while searching GIFs
 
 import { BiSolidSend } from "react-icons/bi";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -23,9 +28,9 @@ export function Chat() {
   const [gifs, setGifs] = useState<any>();
   const [isOpen, setIsOpen] = useState(false);
   const chatContainerRef = useRef<HTMLLIElement>(null);
-
   const [query, setQuery] = useState("");
 
+  // GET list of trending GIFS (smaller quantity due to API key rate limit)
   async function handleGetTrending() {
     if (isOpen) {
       setIsOpen(false);
@@ -44,6 +49,7 @@ export function Chat() {
     }
   }
 
+  // handle GIF searches with a set limit (rate limited)
   async function handleGifSearch() {
     try {
       const res = await fetch(`/api/gifs/search?q=${query}`);
@@ -55,6 +61,7 @@ export function Chat() {
     }
   }
 
+  // load message log and scroll to the latest message
   useEffect(() => {
     async function loadMsg() {
       try {
@@ -70,6 +77,7 @@ export function Chat() {
     return () => {};
   }, []);
 
+  // socket on to listen for messages, appends to message log with timestamp
   useEffect(() => {
     socket?.on("server response", (data) => {
       setLogs([...logs, { ...data, sentAt: Date.now() }]);
@@ -77,10 +85,12 @@ export function Chat() {
     });
   }, [logs, socket]);
 
+  // scrolls down after a new message is sent
   useEffect(() => {
     chatContainerRef.current?.scrollIntoView();
   }, [logs]);
 
+  // async call for the message log
   async function fetchMessages() {
     const response = await fetch("/api/messageLog");
     if (!response.ok) throw new Error(`fetch error:, ${response.status}`);
@@ -88,6 +98,7 @@ export function Chat() {
     setLogs(messageLog);
   }
 
+  // POST new messages and emit to other users
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input && socket && isConnected) {
@@ -111,6 +122,7 @@ export function Chat() {
     setIsOpen(false);
   };
 
+  // POST selected GIF
   async function handleGifClick(gifUrl: string) {
     if (!socket || !isConnected) return;
 
@@ -135,6 +147,7 @@ export function Chat() {
     });
   }
 
+  // timestamp formatting for messages
   function formatTimeStamp(timezonetz) {
     const messageDate = new Date(timezonetz);
     const currentDate = new Date();

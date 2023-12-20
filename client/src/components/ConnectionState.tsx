@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { AppContext } from "./AppContext";
 
+// indicator light for connection status (works best on mobile)
+
 export function ConnectionState() {
   const { isConnected } = useContext(AppContext);
 

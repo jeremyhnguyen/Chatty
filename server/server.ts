@@ -35,6 +35,7 @@ const httpServer = app.listen(process.env.PORT, () => {
   console.log(`\n\n app listening on port ${process.env.PORT}\n\n`);
 });
 
+// connect server for socket + data handling
 const io = new Server(httpServer, {
   cors: {
     origin: '*',
@@ -54,6 +55,7 @@ io.on('connection', (socket) => {
   });
 });
 
+// static images (dark/light logos)
 const reactStaticDir = new URL('../client/dist', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
@@ -63,10 +65,11 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/test', (req, res) => {
-  res.json({ httpserver: httpServer, serverport: process.env.PORT });
-});
+// app.get('/api/test', (req, res) => {
+//   res.json({ httpserver: httpServer, serverport: process.env.PORT });
+// });
 
+// GET trending GIFs (limited to 16)
 app.get('/api/gifs/trending', async (req, res, next) => {
   try {
     const trendingGifs = await fetch(
@@ -85,6 +88,7 @@ app.get('/api/gifs/trending', async (req, res, next) => {
   }
 });
 
+// GET searched GIFs (limited to 16)
 app.get('/api/gifs/search', async (req, res, next) => {
   try {
     const q = req.query.q as string;
@@ -105,6 +109,7 @@ app.get('/api/gifs/search', async (req, res, next) => {
   }
 });
 
+// POST sign up into DB
 app.post('/api/auth/sign-up', async (req, res, next) => {
   try {
     const { username, password } = req.body as Partial<Auth>;
@@ -126,6 +131,7 @@ app.post('/api/auth/sign-up', async (req, res, next) => {
   }
 });
 
+// POST signing into chatroom
 app.post('/api/auth/sign-in', async (req, res, next) => {
   try {
     const { username, password } = req.body as Partial<Auth>;
@@ -156,6 +162,7 @@ app.post('/api/auth/sign-in', async (req, res, next) => {
   }
 });
 
+// POST new messages
 app.post('/api/messages', async (req, res, next) => {
   try {
     const { userId, body, isGif } = req.body as {
@@ -176,6 +183,7 @@ app.post('/api/messages', async (req, res, next) => {
   }
 });
 
+// GET chat history
 app.get('/api/messageLog', async (req, res, next) => {
   try {
     const sql = `
